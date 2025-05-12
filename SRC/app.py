@@ -1,14 +1,17 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
+from dotenv import load_dotenv
+import os
 import pymysql #Conector com o banco de dadoflask
+
 
 app = Flask(__name__)
 
 def database():
     conexao = pymysql.connect(
-        host='localhost',
-        user='root',
-        password='',
-        db='dht11_db',
+        host = os.getenv('DB_HOST'),
+        user = os.getenv('DB_USER'),
+        password = os.getenv('DB_PASSWORD'),
+        db = os.getenv('DB_NAME'),
         cursorclass=pymysql.cursors.DictCursor
     )
 
@@ -37,14 +40,21 @@ def home():
     print(dados)
     return render_template("home.html", dados=dados)
 
-@app.route('/', method['GET', 'POST'])
+@app.route('/', methods = ['GET', 'POST'])
 def index():
-    if request.method == 'GET':
-        return render_template('index.html')
-    elif request.method == 'POST':
+    if request.method == 'POST':
         entrada = request.form['entrada']
         senha = request.form['senha']
 
+        conexao = database()
+        if conexao:
+            cursor = conexao.cursor(pymysql.cursors.DictCursor)
+            cursor.execute("SELECT * FROM users WHERE email = %s or cpf = %s", (entrada, entrada))
+            user = cursor.fetchone()
+            if user['senha'] == senha:
+                return redirect(url_for('home'))
+            else:
+                return render_template('index.html', error='Invalid credentials')
 
 if __name__ == '__main__':
     app.run(debug=True)
