@@ -31,6 +31,12 @@ def database():
     finally:
         conexao.close()
 
+@app.route('/home')
+def home():
+    dados = database()
+    print(dados)
+    return render_template("home.html", dados=dados)
+
 @app.route('/', method['GET', 'POST'])
 def index():
     if request.method == 'GET':
