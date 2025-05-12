@@ -3,31 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teste</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <title>Login - RainTrack</title>
+    <link rel="stylesheet" href="../static/style.css">
 </head>
 <body>
-    <div id="container" style="width:100%; height:400px;">
-        <script>
-            const categorias = JSON.parse('{{ dados["categories"] | tojson | safe }}');
-            const series = JSON.parse('{{ dados["series"] | tojson | safe }}');
-        
-            Highcharts.chart('container', {
-                chart: { type: 'line' },
-                title: { text: 'Teste' },
-                xAxis: {
-                    categories: categorias,
-                    title: { text: 'Hora' }
-                },
-                yAxis: {
-                    title: { text: 'Valores' }
-                },
-                series: series
-            });
-        </script>
-        
-              
+    <div class="principalTitle">
+        <h1 class="title">
+            LOGIN
+        </h1>
+    </div>
+    <div class="form">
+        <form action="index.html" method="POST">
+            <div class="input">
+                <label for="name">Email ou CPF</label>
+                <input type="text" name="entrada" id="entrada">
+            </div>
+            <div class="input">
+                <label for="senha">Senha</label>
+                <input type="password" name="senha" id="senha">
+            </div>
+            <div class="submit">
+                <input type="submit" value="Entrar">
+            </div>
+        </form>
     </div>
 </body>
 </html>

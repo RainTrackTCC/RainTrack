@@ -31,11 +31,14 @@ def database():
     finally:
         conexao.close()
 
-@app.route('/')
+@app.route('/', method['GET', 'POST'])
 def index():
-    dados = database()
-    print(dados)
-    return render_template("index.html", dados=dados)
+    if request.method == 'GET':
+        return render_template('index.html')
+    elif request.method == 'POST':
+        entrada = request.form['entrada']
+        senha = request.form['senha']
+
 
 if __name__ == '__main__':
     app.run(debug=True)
