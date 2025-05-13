@@ -4,12 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teste</title>
-    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://code.highcharts.com/highcharts.js"></script>
 </head>
 <body>
-    <div id="container" style="width:100%; height:400px;">
-        <script src="../static/scripts.js"></script> 
+    <div class="container" id="container">
+        <script>
+            const categorias = {{ dados["categories"] | tojson | safe }};
+            const series = {{ dados["series"] | tojson | safe }};
+
+            Highcharts.chart('container', {
+                chart: { type: 'line' },
+                title: { text: 'Temperatura e Umidade' },
+                xAxis: {
+                    categories: categorias,
+                    title: { text: 'Hora' }
+                },
+                yAxis: {
+                    title: { text: 'Valores' }
+                },
+                series: series
+            });
+        </script> 
     </div>
 </body>
 </html>

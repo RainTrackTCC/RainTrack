@@ -15,4 +15,9 @@ CREATE TABLE users(
     senha VARCHAR(255) NOT NULL
 );
 
-SELECT * FROM dht11_readings;
+INSERT INTO users(nome, email, cpf, senha)
+VALUES
+("Igor", "igor@gmail.com", "52637383829", "123");
+
+-- SELECT * FROM dht11_readings;
+-- SELECT * FROM users;
