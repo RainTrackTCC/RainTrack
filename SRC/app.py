@@ -44,6 +44,29 @@ def home():
     print(dados)
     return render_template("home.html", dados=dados)
 
+@app.route('/cadastro', methods=['GET', 'POST'])
+def cadastro():
+    if request.method == 'POST':
+        nome = request.form['nome']
+        email = request.form['email']
+        cpf = request.form['cpf']
+        senha = request.form['senha']
+        connection = get_db_connection()
+        if connection:
+            cursor = connection.cursor(pymysql.cursors.DictCursor)
+            cursor.execute("SELECT * FROM users WHERE email = %s OR cpf = %s", (email, cpf))
+            ex = cursor.fetchone()
+            if ex:
+                return render_template('register.html', error="Email ou CPF já registrado.")
+            else:
+                cursor.execute(
+                    "INSERT INTO users (nome, email, cpf, senha) VALUES (%s, %s, %s, %s)",
+                    (nome, email, cpf, senha)
+                )
+            connection.commit()
+            return redirect(url_for('index'))
+    return render_template('register.html')
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
