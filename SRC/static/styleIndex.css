@@ -1,6 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Asap+Condensed:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+.darkBlue{color: #0097B2;}
+.lightBlue{color: #51BBD5;}
+.bold{font-weight: bolder;}
+.medium{font-weight: bold;}
+.mediumSize{font-size: 1.2rem;}
+
+
 *{
     margin: 0;
     padding: 0;
+    text-decoration: none;
+    font-family: "ROBOTO MONO", sans-serif;
 }
 
 body{
@@ -9,7 +19,41 @@ body{
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 100px;
+}
+
+.header{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    height: 7rem;
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+.logo img{
+    width: 240px;
+}
+.logo{
+    margin-left: 2rem;
+}
+
+.links{
+    margin-right: 2rem;
+    display: flex;
+    gap: 40px;
+}
+
+.content{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+.leftContent, .rightContent {
+    width: 50%;
+    height: calc(100vh - 7rem);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 form{
