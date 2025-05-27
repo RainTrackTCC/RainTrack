@@ -47,6 +47,7 @@ body{
     width: 100%;
     display: flex;
     flex-direction: row;
+    align-items: center;
 }
 .leftContent, .rightContent {
     width: 50%;
@@ -56,14 +57,97 @@ body{
     align-items: center;
 }
 
+.linha{
+    width: 2px;
+    height: 80%;
+    background-color: #ccc;
+}
+
+.formCard{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 60%;
+    height: 75%;
+    border-radius: 25px;
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+.principalTitle{
+    width: 100%;
+    text-align: center;
+    padding-block: 30px;
+    border-radius: 25px 25px 0 0;
+    background-image: url(img/backgroundNuvem.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: white;
+    font-size: 1.3rem;
+}
+
+.form{
+    width: 100%;
+    height: 100%;
+    border-radius: 0 0 25px 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
 form{
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 50px;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.input{
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    gap: 0.2rem;
+}
+.input label{
+    margin-left: 5px;
+    font-size: 1.2rem;
+    font-weight: 300;
+}
+.input input{
+    width: 100%;
+    font-size: 1.2rem;
+    border: 3px solid #0097B2;
+    border-radius: 10px;
+    padding-left: 10px;
+    box-sizing: border-box;
 }
 
 .submit{
-    width: 100%;
     display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
     justify-content: center;
+    align-items: center;
+}
+.submit input{
+    height: 40px;
+    background-color: #0097B2;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 1.2rem;
+    width: 60%;
+}
+
+.submit a{
+    text-decoration: underline;
+    color: #0097B2;
+    font-size: 1.2rem;
+}
+.submit span{
+    font-size: 1.2rem;
 }
