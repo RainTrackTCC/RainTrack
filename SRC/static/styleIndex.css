@@ -35,12 +35,44 @@ body{
 }
 .logo{
     margin-left: 2rem;
+    transition: all 0.2s ease-in-out;
+}
+.logo:hover{
+    cursor: pointer;
+    scale: 105%;
 }
 
-.links{
+.links {
     margin-right: 2rem;
     display: flex;
     gap: 40px;
+}
+
+.links a {
+    position: relative;
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+}
+
+.links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #0097B2;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease-in-out;
+}
+
+.links a:hover::after {
+    transform: scaleX(1);
+}
+
+.links a:hover {
+    color: #0097B2;
 }
 
 .content{
@@ -99,31 +131,50 @@ body{
 form{
     display: flex;
     flex-direction: column;
-    gap: 50px;
     width: 100%;
+    height: 100%;
     justify-content: center;
     align-items: center;
+}
+
+.formInputs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  height: 100%;
+}
+
+input{
+    width: 100%;
+    font-size: 1rem;
+    border: 3px solid #0097B2;
+    border-radius: 10px;
+    padding-left: 10px;
+    box-sizing: border-box;
+    outline: none;
+    transition: all 0.2s ease-in-out;
+    padding-block: 5px;
+}
+input:focus{
+    border: 3px solid #51BBD5;
+    box-shadow: 0 0 0 2px rgba(0, 150, 161, 0.2)
 }
 
 .input{
     display: flex;
     flex-direction: column;
     width: 80%;
-    gap: 0.2rem;
 }
 .input label{
     margin-left: 5px;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: 300;
+
 }
-.input input{
-    width: 100%;
-    font-size: 1.2rem;
-    border: 3px solid #0097B2;
-    border-radius: 10px;
-    padding-left: 10px;
-    box-sizing: border-box;
-}
+
 
 .submit{
     display: flex;
@@ -132,6 +183,7 @@ form{
     width: 100%;
     justify-content: center;
     align-items: center;
+    padding-block: 20px;
 }
 .submit input{
     height: 40px;
@@ -141,13 +193,23 @@ form{
     color: white;
     font-size: 1.2rem;
     width: 60%;
+    transition: all 0.2s ease-in-out;
+}
+.submit input:hover{
+    cursor: pointer;
+    background-color: #51BBD5;
 }
 
 .submit a{
     text-decoration: underline;
     color: #0097B2;
     font-size: 1.2rem;
+    transition: all 0.2s ease-in-out;
+}
+.submit a:hover{
+    color: #51BBD5;
 }
 .submit span{
     font-size: 1.2rem;
+    font-weight: 300;
 }
