@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - RainTrack</title>
+    <title>Cadastro - RainTrack</title>
     <link rel="stylesheet" href="../static/styleIndex.css">
     <link rel="icon" type="image/png" href="../static/img/favicon/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="../static/img/favicon/favicon.svg" />
@@ -25,6 +25,12 @@
     </div>
     <div class="content">
         <div class="leftContent">
+            <div class="imagemLogin">
+                <img src="../static/img/imagemLogin.png" alt="">
+            </div>
+        </div>
+        <div class="linha"></div>
+        <div class="rightContent">
             <div class="formCard">
                 <div class="principalTitle">
                     <h1 class="title">
@@ -33,33 +39,30 @@
                 </div>
                 <div class="form">
                     <form action="/" method="POST">
-                        <div class="input">
-                            <label for="name">Nome</label> <br>
-                            <input type="text" name="nome" required>
-                        </div>
-                        <div class="input">
-                            <label for="email">Email</label> <br>
-                            <input type="email" name="email" required>
-                        </div>
-                        <div class="input">
-                            <label for="name">CPF</label> <br>
-                            <input type="text" name="cpf" maxlength="11" required>
-                        </div>
-                        <div class="input">
-                            <label for="senha">Senha</label> <br>
-                            <input type="password" name="senha" id="senha">
+                        <div class="formInputs">
+                            <div class="input">
+                                <label for="name">Nome</label>
+                                <input type="text" name="nome" required>
+                            </div>
+                            <div class="input">
+                                <label for="email">Email</label>
+                                <input type="email" name="email" required>
+                            </div>
+                            <div class="input">
+                                <label for="name">CPF</label>
+                                <input type="text" name="cpf" maxlength="11" required>
+                            </div>
+                            <div class="input">
+                                <label for="senha">Senha</label>
+                                <input type="password" name="senha" id="senha">
+                            </div>
                         </div>
                         <div class="submit">
                             <input type="submit" value="CADASTRAR">
+                            <span>Já possui uma conta? <a href="{{ url_for('index') }}">Entre</a> aqui!</span>
                         </div>
                     </form>
                 </div>
-            </div>
-        </div>
-        <div class="linha"></div>
-        <div class="rightContent">
-            <div class="imagemLogin">
-                <img src="../static/img/imagemLogin.png" alt="">
             </div>
         </div>
     </div>
