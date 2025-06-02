@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro - RainTrack</title>
-    <link rel="stylesheet" href="../static/styleIndex.css">
+    <link rel="stylesheet" href="../static/style.css">
     <link rel="icon" type="image/png" href="../static/img/favicon/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="../static/img/favicon/favicon.svg" />
     <link rel="shortcut icon" href="../static/img/favicon/favicon.ico" />
@@ -37,8 +37,13 @@
                         CADASTRO
                     </h1>
                 </div>
+                {% if error %}
+                <div class="error">
+                    <p>{{ error }}</p>
+                </div>
+                {% endif %}
                 <div class="form">
-                    <form action="/" method="POST">
+                    <form action="/cadastro" method="POST">
                         <div class="formInputs">
                             <div class="input">
                                 <label for="name">Nome</label>

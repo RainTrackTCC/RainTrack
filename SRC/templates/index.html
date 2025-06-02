@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - RainTrack</title>
-    <link rel="stylesheet" href="../static/styleIndex.css">
+    <link rel="stylesheet" href="../static/style.css">
     <link rel="icon" type="image/png" href="../static/img/favicon/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="../static/img/favicon/favicon.svg" />
     <link rel="shortcut icon" href="../static/img/favicon/favicon.ico" />
@@ -18,9 +18,9 @@
             <img src="../static/img/logoCompleta1.png" alt="RainTrack">
         </div>
         <div class="links">
-            <a href="" class="lightBlue medium mediumSize">início</a>
-            <a href="" class="lightBlue medium mediumSize">sobre nós</a>
-            <a href="" class="lightBlue medium mediumSize">entrar</a>
+            <a href="" class="lightBlue medium mediumSize">Início</a>
+            <a href="" class="lightBlue medium mediumSize">Sobre nós</a>
+            <a href="" class="lightBlue medium mediumSize">Entrar</a>
         </div>
     </div>
     <div class="content">
@@ -31,6 +31,16 @@
                         LOGIN
                     </h1>
                 </div>
+                {% if error %}
+                <div class="error">
+                    <p>{{ error }}</p>
+                </div>
+                {% endif %}
+                {% if success %}
+                <div class="success">
+                    <p>{{ success }}</p>
+                </div>
+                {% endif %}
                 <div class="form">
                     <form action="/" method="POST">
                         <div class="formInputs">
@@ -58,6 +68,5 @@
             </div>
         </div>
     </div>
-    
 </body>
 </html>
