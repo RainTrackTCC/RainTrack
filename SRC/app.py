@@ -85,11 +85,11 @@ def index():
             else:
                 if user is None:
                     error_message = 'Usuário não encontrado. Verifique seu email ou CPF.'
-                    return render_template('index.html', error=error_message)
+                    return render_template('indexAT.html', error=error_message)
                 elif user and user['senha'] != senha:
                     error_message = 'Senha incorreta. Tente novamente.'
-                    return render_template('index.html', error=error_message)
-    return render_template('index.html')
+                    return render_template('indexAT.html', error=error_message)
+    return render_template('indexAT.html')
 
 if __name__ == '__main__':
     app.run(debug=True) 
