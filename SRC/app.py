@@ -43,8 +43,9 @@ def get_data():
 def home():
     dados = get_data()
     user_name = request.args.get('user_name')
+    user_type = request.args.get('user_type')
     print(dados)
-    return render_template("home.html", dados=dados, user_name=user_name)
+    return render_template("home.html", dados=dados, user_name=user_name, user_type=user_type)
 
 @app.route('/cadastro', methods=['GET', 'POST'])
 def cadastro():
@@ -78,10 +79,10 @@ def index():
         connection = get_db_connection()
         if connection:
             cursor = connection.cursor(pymysql.cursors.DictCursor)
-            cursor.execute("SELECT senha, email, nome FROM users WHERE email = %s or cpf = %s", (entrada, entrada))
+            cursor.execute("SELECT senha, email, nome, type FROM users WHERE email = %s or cpf = %s", (entrada, entrada))
             user = cursor.fetchone()
             if user and user['senha'] == senha:
-               return redirect(url_for('home', user_name=user['nome']))
+               return redirect(url_for('home', user_name=user['nome'], user_type=user['type']))
             else:
                 if user is None:
                     error_message = 'Usuário não encontrado. Verifique seu email ou CPF.'

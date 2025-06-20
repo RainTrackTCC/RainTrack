@@ -7,7 +7,7 @@ db = mysql.connector.connect(
     host="localhost",
     user="root",
     password="",
-    database="dht11_db"
+    database="rainTrack"
 )
 cursor = db.cursor()
 
@@ -21,7 +21,7 @@ def on_message(client, userdata, msg):
         data = json.loads(msg.payload.decode())
         temperature = data['temperature']
         humidity = data['humidity']
-        cursor.execute("INSERT INTO dht11_readings (temperature, humidity) VALUES (%s, %s)", (temperature, humidity))
+        cursor.execute("INSERT INTO readings (temperature, humidity) VALUES (%s, %s)", (temperature, humidity))
         db.commit()
         print("Dados inseridos no banco com sucesso.")
     except Exception as e:

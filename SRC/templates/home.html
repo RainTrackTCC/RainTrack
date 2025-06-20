@@ -17,7 +17,13 @@
             <a href="" class="lightBlue medium mediumSize">Sobre nós</a>
             {% if user_name %}
                 <a href="" class="lightBlue medium mediumSize">Gráficos</a>
-                <a href="" class="lightBlue medium mediumSize">{{user_name}}</a>
+
+                {% if user_type == '1' %}
+                    <a href="" class="lightBlue medium mediumSize">Admin</a>
+                {% else %}
+                    <a href="" class="lightBlue medium mediumSize">{{ user_name }}</a>
+                {% endif %}
+
             {% else %}
                 <a href="" class="lightBlue medium mediumSize">Entrar</a>
             {% endif %}

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - RainTrack</title>
+    <title>Admin - RainTrack</title>
     <link rel="stylesheet" href="../static/style.css">
     <link rel="icon" type="image/png" href="../static/img/favicon/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="../static/img/favicon/favicon.svg" />
@@ -18,17 +18,18 @@
             <img src="../static/img/logoCompleta1.png" alt="RainTrack">
         </div>
         <div class="links">
-            <a href="indexAT.html" class="lightBlue medium mediumSize">Início</a>
+            <a href="" class="lightBlue medium mediumSize">Início</a>
             <a href="" class="lightBlue medium mediumSize">Sobre nós</a>
-            <a href="" class="lightBlue medium mediumSize">Entrar</a>
+            <a href="" class="lightBlue medium mediumSize">Gráficos</a>
+            <a href="" class="lightBlue medium mediumSize">Admin</a>
         </div>
-    </div>
+    </div>    
     <div class="content">
         <div class="leftContent">
             <div class="formCard">
                 <div class="principalTitle">
                     <h1 class="title">
-                        LOGIN
+                        CADASTRAR ESTAÇÃO 
                     </h1>
                 </div>
                 {% if error %}
@@ -45,10 +46,10 @@
                     <form action="/" method="POST">
                         <div class="formInputs">
                             <div class="input">
-                                <label for="entrada">Email ou CPF</label>
-                                <input type="text" name="entrada" id="entrada" required>
+                                <label for="station">Nome da Estação</label>
+                                <input type="text" name="station" id="station" required>
                             </div>
-                            <div class="input">
+                            <div class="input"> 
                                 <label for="senha">Senha</label>
                                 <input type="password" name="senha" id="senha" required>
                             </div>
@@ -63,8 +64,43 @@
         </div>
         <div class="linha"></div>
         <div class="rightContent">
-            <div class="imagemLogin">
-                <img src="../static/img/imagemLogin.png" alt="">
+            <div class="formCard">
+                <div class="principalTitle">
+                    <h1 class="title">
+                        CADASTRO
+                    </h1>
+                </div>
+                {% if error %}
+                <div class="error">
+                    <p>{{ error }}</p>
+                </div>
+                {% endif %}
+                <div class="form">
+                    <form action="/cadastro" method="POST">
+                        <div class="formInputs">
+                            <div class="input">
+                                <label for="name">Nome</label>
+                                <input type="text" name="nome" required>
+                            </div>
+                            <div class="input">
+                                <label for="email">Email</label>
+                                <input type="email" name="email" required>
+                            </div>
+                            <div class="input">
+                                <label for="name">CPF</label>
+                                <input type="text" name="cpf" maxlength="11" required>
+                            </div>
+                            <div class="input">
+                                <label for="senha">Senha</label>
+                                <input type="password" name="senha" id="senha" required>
+                            </div>
+                        </div>
+                        <div class="submit">
+                            <input type="submit" value="CADASTRAR">
+                            <span>Já possui uma conta? <a href="{{ url_for('index') }}">Entre</a> aqui!</span>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

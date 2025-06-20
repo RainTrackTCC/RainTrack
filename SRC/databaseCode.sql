@@ -1,26 +1,34 @@
-CREATE DATABASE dht11_db;
-USE dht11_db;
+CREATE DATABASE rainTrack;
+USE rainTrack;
 
-CREATE TABLE dht11_readings(
-	id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE users (
+	id INT PRIMARY KEY NOT NULL UNIQUE AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    cpf VARCHAR(11) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE stations (
+	id INT PRIMARY KEY NOT NULL UNIQUE AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    location VARCHAR(255) NOT NULL,
+    MAC VARCHAR(17) NOT NULL UNIQUE
+);
+
+CREATE TABLE sensors (
+	id INT PRIMARY KEY NOT NULL UNIQUE AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    cdStation INT NOT NULL,
+    FOREIGN KEY (cdStation) REFERENCES stations(id)
+);
+
+CREATE TABLE readings (
+	id INT PRIMARY KEY NOT NULL UNIQUE AUTO_INCREMENT,
+    cdSensor INT NOT NULL,
     temperature FLOAT,
     humidity FLOAT,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE users(
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    email VARCHAR(200) NOT NULL UNIQUE,
-    username VARCHAR(30),
-    cpf VARCHAR(11) NOT NULL UNIQUE,
-    senha VARCHAR(255) NOT NULL
-);
-
-INSERT INTO users(nome, email, cpf, senha)
-VALUES
-("Bruno", "brunoso2006@gmail.com", "39011825861", "123"),
-("Igor", "igor@email.com", "11122233344", "1234");
-
--- SELECT * FROM dht11_readings;
--- SELECT * FROM users;
+    pluviosity FLOAT,
+	dateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (cdSensor) REFERENCES sensors(id)
+)
