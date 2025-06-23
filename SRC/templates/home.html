@@ -1,52 +1,14 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teste</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-</head>
-<body>
-    <div class="header">
-        <div class="logo">
-            <img src="../static/img/logoCompleta1.png" alt="RainTrack">
-        </div>
-        <div class="links">
-            <a href="" class="lightBlue medium mediumSize">Início</a>
-            <a href="" class="lightBlue medium mediumSize">Sobre nós</a>
-            {% if user_name %}
-                <a href="" class="lightBlue medium mediumSize">Gráficos</a>
+{% extends 'base.html' %}
 
-                {% if user_type == '1' %}
-                    <a href="" class="lightBlue medium mediumSize">Admin</a>
-                {% else %}
-                    <a href="" class="lightBlue medium mediumSize">{{ user_name }}</a>
-                {% endif %}
+{% block title %}Página Home{% endblock %}
 
-            {% else %}
-                <a href="" class="lightBlue medium mediumSize">Entrar</a>
-            {% endif %}
-        </div>
-    </div>
-    <div class="container" id="container">
-        <script>
-            let categorias = JSON.parse('{{ dados["categories"] | tojson | safe }}');
-            let series = JSON.parse('{{ dados["series"] | tojson | safe }}');
+{% block content %}
+    {% if user_name %}
+      <h1>Bem-vindo, {{ user_name }}!</h1>
+    {% else %}
+      <h1>Bem-vindo, visitante!</h1>
+    {% endif %}
+    
 
-            Highcharts.chart('container', {
-                chart: { type: 'line' },
-                title: { text: 'Temperatura e Umidade' },
-                xAxis: {
-                categories: categorias,
-                title: { text: 'Hora' }
-                },
-                yAxis: {
-                title: { text: 'Valores' }
-                },
-                series: series
-            });
-        </script> 
-    </div>
-</body>
-</html>
+  
+{% endblock %}

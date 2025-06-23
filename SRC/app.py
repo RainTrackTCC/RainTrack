@@ -22,7 +22,7 @@ def get_data():
     connection = get_db_connection()
     try:
         with connection.cursor() as cursor:
-            cursor.execute("SELECT temperature, humidity, timestamp FROM dht11_readings ORDER BY timestamp")
+            cursor.execute("SELECT temperature, humidity, timestamp FROM measures ORDER BY timestamp")
             results = cursor.fetchall()
 
         tempo = [linha["timestamp"].strftime("%H:%M") for linha in results]
@@ -41,11 +41,13 @@ def get_data():
 
 @app.route('/home')
 def home():
-    dados = get_data()
+    # dados = get_data()
     user_name = request.args.get('user_name')
-    user_type = request.args.get('user_type')
-    print(dados)
-    return render_template("home.html", dados=dados, user_name=user_name, user_type=user_type)
+    user_role = request.args.get('user_role')
+    return render_template("home.html", user_name=user_name, user_role=user_role)
+    # print(dados)
+    # return render_template("home.html", dados=dados, user_name=user_name, user_role=user_role)
+    
 
 @app.route('/cadastro', methods=['GET', 'POST'])
 def cadastro():
@@ -74,23 +76,28 @@ def cadastro():
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        entrada = request.form['entrada']
-        senha = request.form['senha']
+        entry = request.form.get('entry')
+        password = request.form.get('password')
+        
+        if not entry or not password:
+            error_message = 'Por favor, preencha todos os campos.'
+            return render_template('index.html', error=error_message)
+        
         connection = get_db_connection()
         if connection:
             cursor = connection.cursor(pymysql.cursors.DictCursor)
-            cursor.execute("SELECT senha, email, nome, type FROM users WHERE email = %s or cpf = %s", (entrada, entrada))
+            cursor.execute("SELECT password, email, name, role, cpf FROM users WHERE email = %s OR cpf = %s", (entry, entry))
             user = cursor.fetchone()
-            if user and user['senha'] == senha:
-               return redirect(url_for('home', user_name=user['nome'], user_type=user['type']))
+            if user and user['password'] == password:
+                return redirect(url_for('home', user_name=user['name'], user_role=user['role']))
             else:
                 if user is None:
                     error_message = 'Usuário não encontrado. Verifique seu email ou CPF.'
-                    return render_template('indexAT.html', error=error_message)
-                elif user and user['senha'] != senha:
+                else:
                     error_message = 'Senha incorreta. Tente novamente.'
-                    return render_template('indexAT.html', error=error_message)
-    return render_template('indexAT.html')
+                return render_template('index.html', error=error_message)
+    
+    return render_template('index.html')
 
 if __name__ == '__main__':
     app.run(debug=True) 

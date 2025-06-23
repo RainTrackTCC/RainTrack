@@ -1,222 +1,225 @@
-@import url('https://fonts.googleapis.com/css2?family=Asap+Condensed:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
-.darkBlue{color: #0097B2;}
-.lightBlue{color: #51BBD5;}
-.bold{font-weight: bolder;}
-.medium{font-weight: bold;}
-.mediumSize{font-size: 1.2rem;}
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&display=swap');
 
-
-*{
+* {
     margin: 0;
     padding: 0;
-    text-decoration: none;
-    font-family: "ROBOTO MONO", sans-serif;
+    box-sizing: border-box;
+    font-family: "Roboto Mono", monospace;
 }
 
-.container {
-    width: 90%; 
-    height: 500px;
+body {
+    display: flex;
+    min-height: 100vh;
+    overflow: hidden;
 }
 
-body{
-    width: 100vw;
-    height: 100vh;
+.sidebar {
+    width: 60px; /* Sidebar colapsada */
+    background-color: #f0f0f0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
+    padding-top: 20px;
+    transition: width 0.3s ease;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
 }
 
-.header{
-    display: flex;
+.sidebar:hover {
+    width: 200px; /* Sidebar expandida */
+}
+
+.sidebar:not(:hover) .links a {
+  width: 60px; /* limite a largura para o tamanho da sidebar fechada */
+  justify-content: center; /* centraliza o ícone no link */
+}
+
+/* Logo dinâmica */
+.sidebar .logo {
+    position: relative;
     width: 100%;
-    justify-content: space-between;
+    height: 60px;
+    display: flex;
+    justify-content: center;
     align-items: center;
-    height: 7rem;
-    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2);
-    z-index: 1000;
+    transition: all 0.3s ease;
 }
 
-.logo img{
-    width: 240px;
+.sidebar .logo ion-icon,
+.sidebar .logo img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.3s ease;
 }
-.logo{
-    margin-left: 2rem;
-    transition: all 0.2s ease-in-out;
+
+.sidebar .logo ion-icon {
+    font-size: 2rem;
+    color: #0097B2;
+    opacity: 1;
+    transition: all 0.3s ease;
 }
-.logo:hover{
-    cursor: pointer;
-    scale: 105%;
+
+.sidebar .logo img {
+    height: 40px;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.sidebar:hover .logo ion-icon {
+    opacity: 0;
+}
+
+.sidebar:hover .logo img {
+    opacity: 1;
 }
 
 .links {
-    margin-right: 2rem;
-    display: flex;
-    gap: 40px;
-}
-
-.links a {
-    position: relative;
-    text-decoration: none;
-    transition: color 0.2s ease-in-out;
-}
-
-.links a::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: #0097B2;
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s ease-in-out;
-}
-
-.links a:hover::after {
-    transform: scaleX(1);
-}
-
-.links a:hover {
-    color: #0097B2;
-}
-
-.content{
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-.leftContent, .rightContent {
-    width: 50%;
-    height: calc(100vh - 7rem);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.linha{
-    width: 2px;
-    height: 80%;
-    background-color: #ccc;
-}
-
-.formCard{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 60%;
-    height: 75%;
-    border-radius: 25px;
-    box-shadow: 0px 4px 10px 0 rgba(0, 0, 0, 0.2);
-}
-
-.principalTitle{
-    width: 100%;
-    text-align: center;
-    padding-block: 30px;
-    border-radius: 25px 25px 0 0;
-    background-image: url(img/backgroundNuvem.png);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    color: white;
-    font-size: 1.3rem;
-}
-
-.form{
-    width: 100%;
-    height: 100%;
-    border-radius: 0 0 25px 25px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-form{
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-}
-
-.formInputs {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  width: 100%;
-  height: 100%;
-}
-
-input{
-    width: 100%;
-    font-size: 1rem;
-    border: 3px solid #0097B2;
-    border-radius: 10px;
-    padding-left: 10px;
-    box-sizing: border-box;
-    outline: none;
-    transition: all 0.2s ease-in-out;
-    padding-block: 5px;
-}
-input:focus{
-    border: 3px solid #51BBD5;
-    box-shadow: 0 0 0 2px rgba(0, 150, 161, 0.2)
-}
-
-.input{
-    display: flex;
-    flex-direction: column;
-    width: 80%;
-}
-.input label{
-    margin-left: 5px;
-    font-size: 1.3rem;
-    font-weight: 300;
-
-}
-
-
-.submit{
     display: flex;
     flex-direction: column;
     gap: 10px;
     width: 100%;
+    margin-top: 30px;
+}
+
+.links a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #0097B2;
+    text-decoration: none;
+    padding: 10px;
+    transition: background-color 0.2s, color 0.2s;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.links a ion-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    color: #0097B2;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.links a span {
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    transform: translateX(-10px);
+    display: none;
+}
+
+.sidebar:hover .links a span {
+    opacity: 1;
+    visibility: visible;
+    display: inline;
+    transform: translateX(0);
+}
+
+.links a:hover {
+    background-color: #51BBD5;
+    color: white;
+}
+
+.links a:hover ion-icon {
+    color: white;
+}
+
+/* Conteúdo principal */
+.main-content {
+    flex: 1;
+    display: flex;
+    padding: 40px;
+    gap: 20px;
+}
+
+.leftContent, .rightContent {
+    flex: 1;
+    display: flex;
     justify-content: center;
     align-items: center;
-    padding-block: 20px;
 }
-.submit input{
-    height: 40px;
+
+.formCard {
+    width: 80%;
+    max-width: 400px;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.title {
+    text-align: center;
+    color: #0097B2;
+    font-size: 2rem;
+}
+
+.formInputs {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.input label {
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.input input {
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid #0097B2;
+    outline: none;
+    transition: 0.2s;
+}
+
+.input input:focus {
+    border-color: #51BBD5;
+    box-shadow: 0 0 5px rgba(0, 150, 161, 0.3);
+}
+
+.submit {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.submit input[type="submit"] {
     background-color: #0097B2;
-    border: none;
-    border-radius: 10px;
     color: white;
-    font-size: 1.2rem;
-    width: 60%;
-    transition: all 0.2s ease-in-out;
-}
-.submit input:hover{
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
     cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+
+.submit input[type="submit"]:hover {
     background-color: #51BBD5;
 }
 
-.submit a{
-    text-decoration: underline;
+.submit a {
     color: #0097B2;
-    font-size: 1.2rem;
-    transition: all 0.2s ease-in-out;
+    text-decoration: underline;
+    font-size: 1rem;
 }
-.submit a:hover{
-    color: #51BBD5;
-}
-.submit span{
-    font-size: 1.2rem;
-    font-weight: 300;
+
+.rightContent img {
+    max-width: 100%;
+    height: auto;
 }
