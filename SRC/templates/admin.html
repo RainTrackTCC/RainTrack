@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Administrador{% endblock %}
+
+{% block content %}
+<div class="centeredContent">
+    <div class="formCard">
+        <h1 class="title">Bem-vindo, {{ user_name }} (Admin)</h1>
+
+        <h2>Cadastrar novo usuário</h2>
+
+        {% if error %}
+            <p style="color: red;">{{ error }}</p>
+        {% endif %}
+        {% if success %}
+            <p style="color: green;">{{ success }}</p>
+        {% endif %}
+
+        <form method="POST">
+            <label>Nome: <input type="text" name="nome" required></label><br>
+            <label>Email: <input type="email" name="email" required></label><br>
+            <label>CPF: <input type="text" name="cpf" required></label><br>
+            <label>Senha: <input type="password" name="senha" required></label><br>
+            <label>Tipo de usuário:
+                <select name="role">
+                    <option value="0">Usuário comum</option>
+                    <option value="1">Administrador</option>
+                </select>
+            </label><br><br>
+            <button type="submit">Cadastrar</button>
+        </form>
+    </div>
+    <p><a href="{{ url_for('home') }}">Voltar para o Início</a></p>
+</div>
+{% endblock %}

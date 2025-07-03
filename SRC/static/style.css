@@ -7,14 +7,25 @@
     font-family: "Roboto Mono", monospace;
 }
 
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    height: 100%;
+    overflow: hidden;
+}
+
 body {
     display: flex;
-    min-height: 100vh;
+    height: 100vh;
+    width: 100vw;
     overflow: hidden;
 }
 
 .sidebar {
-    width: 60px; /* Sidebar colapsada */
+    width: 60px;
     background-color: #f0f0f0;
     display: flex;
     flex-direction: column;
@@ -27,15 +38,14 @@ body {
 }
 
 .sidebar:hover {
-    width: 200px; /* Sidebar expandida */
+    width: 200px;
 }
 
 .sidebar:not(:hover) .links a {
-  width: 60px; /* limite a largura para o tamanho da sidebar fechada */
-  justify-content: center; /* centraliza o ícone no link */
+  width: 60px;
+  justify-content: center;
 }
 
-/* Logo dinâmica */
 .sidebar .logo {
     position: relative;
     width: 100%;
@@ -133,30 +143,73 @@ body {
     color: white;
 }
 
-/* Conteúdo principal */
 .main-content {
     flex: 1;
     display: flex;
     padding: 40px;
     gap: 20px;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+.centeredContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.container {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
 }
 
 .leftContent, .rightContent {
-    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
+.leftContent {
+    flex: 1.8;
+}
+
+.rightContent {
+    flex: 1.2;
+}
+
+.rightContent img {
+    width: 100%;
+    max-width: 800px;
+    height: auto;
+    object-fit: contain;
+}
+
 .formCard {
-    width: 80%;
-    max-width: 400px;
+    width: 50%;
+    height: 50%;
     padding: 20px;
     border-radius: 15px;
     box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
     background-color: white;
     display: flex;
+    align-items: center;
+    justify-content: space-around;    
     flex-direction: column;
+    gap: 20px;
+}
+
+.form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 20px;
 }
 
@@ -170,6 +223,12 @@ body {
     display: flex;
     flex-direction: column;
     gap: 15px;
+}
+
+input {
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
 }
 
 .input label {
@@ -217,9 +276,4 @@ body {
     color: #0097B2;
     text-decoration: underline;
     font-size: 1rem;
-}
-
-.rightContent img {
-    max-width: 100%;
-    height: auto;
 }
