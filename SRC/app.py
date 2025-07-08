@@ -62,7 +62,7 @@ def index():
         elif user['password'] != password:
             error_message = 'Senha incorreta. Tente novamente.'
         else:
-            session['user_name'] = user['name']
+            session['user_name'] = user['name'].split()[0]
             session['user_role'] = user['role']
             return redirect(url_for('home'))
 
@@ -79,30 +79,6 @@ def home():
     # print(dados)
     # return render_template("home.html", dados=dados, user_name=user_name, user_role=user_role)
 
-@app.route('/cadastro', methods=['GET', 'POST'])
-def cadastro():
-    if request.method == 'POST':
-        nome = request.form['nome']
-        email = request.form['email']
-        cpf = request.form['cpf']
-        senha = request.form['senha']
-        connection = get_db_connection()
-        cursor = connection.cursor(pymysql.cursors.DictCursor)
-        cursor.execute("SELECT id FROM users WHERE email = %s OR cpf = %s", (email, cpf))
-        user = cursor.fetchone()
-
-        if user:
-            error_message = "Email ou CPF já existem."
-            return render_template("register.html", error=error_message)
-        cursor.execute("INSERT INTO users (nome, email, cpf, senha) VALUES (%s, %s, %s, %s)",
-                       (nome, email, cpf, senha))
-        connection.commit()
-        cursor.close()
-        connection.close()
-        return redirect(url_for('index', success='true'))
-
-    return render_template("register.html") 
-
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
     user_name = session.get('user_name')
@@ -112,10 +88,10 @@ def admin():
         return redirect(url_for('index'))
 
     if request.method == 'POST':
-        nome = request.form.get('nome')
+        name = request.form.get('name')
         email = request.form.get('email')
         cpf = request.form.get('cpf')
-        senha = request.form.get('senha')
+        password = request.form.get('password')
         role = request.form.get('role')
 
         connection = get_db_connection()
@@ -127,8 +103,8 @@ def admin():
             error = "Email ou CPF já existe."
             return render_template("admin.html", user_name=user_name, user_role=user_role, error=error)
 
-        cursor.execute("INSERT INTO users (nome, email, cpf, senha, role) VALUES (%s, %s, %s, %s, %s)",
-                       (nome, email, cpf, senha, role))
+        cursor.execute("INSERT INTO users (name, email, cpf, password, role) VALUES (%s, %s, %s, %s, %s)",
+                       (name, email, cpf, password, role))
         connection.commit()
         cursor.close()
         connection.close()
