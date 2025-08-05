@@ -32,7 +32,7 @@ CREATE TABLE typeParameters (
 CREATE TABLE parameters (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     cdTypeParameter INT NOT NULL,
-    cdStation INT NOT NULL,
+    cdStation INT,
     FOREIGN KEY (cdTypeParameter) REFERENCES typeParameters(id),
     FOREIGN KEY (cdStation) REFERENCES stations(id)
 );
