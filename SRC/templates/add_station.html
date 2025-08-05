@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Adicionar Estação{% endblock %}
+
+{% block content %}
+<div class="centeredContent">
+    <div class="adminCard">
+        <h1 class="title">Cadastrar Nova Estação</h1>
+
+        {% if error %}
+            <p style="color: red;">{{ error }}</p>
+        {% endif %}
+        {% if success %}
+            <p style="color: green;">{{ success }}</p>
+        {% endif %}
+
+        <form class="form" action="{{ url_for('add_station') }}" method="POST">
+            <div class="formInputs">
+                <div class="input">
+                    <label for="name">Nome da Estação</label>
+                    <input type="text" name="name" id="name" required />
+                </div>
+
+                <div class="input">
+                    <label for="latitude">Latitude</label>
+                    <input type="text" name="latitude" id="latitude" required />
+                </div>
+
+                <div class="input">
+                    <label for="longitude">Longitude</label>
+                    <input type="text" name="longitude" id="longitude" required />
+                </div>
+
+                <div class="input">
+                    <label for="uuid">UUID</label>
+                    <input type="text" name="uuid" id="uuid" maxlength="17" required />
+                </div>
+
+                <div class="input">
+                    <label for="cdParameter">Código do Parâmetro</label>
+                    <input type="number" name="cdParameter" id="cdParameter" />
+                </div>
+
+                <div class="submit">
+                    <input type="submit" value="CADASTRAR ESTAÇÃO" />
+                </div>
+            </div>
+        </form>
+        <p><a href="{{ url_for('stations') }}">Voltar para a lista</a></p>
+    </div>
+</div>
+{% endblock %}

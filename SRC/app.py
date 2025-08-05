@@ -1,4 +1,6 @@
 from flask import Flask, flash, render_template, request, redirect, url_for, session
+from flask import make_response
+from functools import wraps
 import pymysql.cursors
 from dotenv import load_dotenv
 import os
@@ -7,6 +9,16 @@ import pymysql
 load_dotenv()
 app = Flask(__name__)
 app.secret_key = "chaveSegurança"
+
+def nocache(view):
+    @wraps(view)
+    def no_cache_view(*args, **kwargs):
+        response = make_response(view(*args, **kwargs))
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        return response
+    return no_cache_view
 
 def get_db_connection():
     connection = pymysql.connect(
@@ -40,6 +52,7 @@ def get_data():
         connection.close()
 
 @app.route('/', methods=['GET', 'POST'])
+@nocache
 def index():
     if request.method == 'POST':
         entry = request.form.get('entry')
@@ -64,14 +77,24 @@ def index():
         else:
             session['user_name'] = user['name'].split()[0]
             session['user_role'] = user['role']
+            session['user_id'] = user['cpf']
             return redirect(url_for('home'))
 
         return render_template('index.html', error=error_message)
     
     return render_template('index.html')
 
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
+
 @app.route('/home')
+@nocache
 def home():
+    if 'user_id' not in session:
+        return redirect(url_for('index'))
+
     # dados = get_data()
     user_name = session.get('user_name')
     user_role = session.get('user_role')
@@ -80,6 +103,7 @@ def home():
     # return render_template("home.html", dados=dados, user_name=user_name, user_role=user_role)
 
 @app.route('/admin', methods=['GET', 'POST'])
+@nocache
 def admin():
     user_name = session.get('user_name')
     user_role = session.get('user_role')
@@ -113,5 +137,140 @@ def admin():
 
     return render_template("admin.html", user_name=user_name, user_role=user_role)
 
+@app.route('/stations')
+@nocache
+def stations():
+    if 'user_id' not in session:
+        return redirect(url_for('index'))
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT name, latitude, longitude, uuid FROM stations ORDER BY createdAt DESC")
+    stations = cursor.fetchall()
+    connection.close()
+    return render_template("stations.html", stations=stations)
+
+@app.route('/add_station', methods=['GET', 'POST'])
+@nocache
+def add_station():
+    if 'user_id' not in session:
+        return redirect(url_for('index'))
+
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    if request.method == 'POST':
+        name = request.form.get('name')
+        latitude = request.form.get('latitude')
+        longitude = request.form.get('longitude')
+        uuid = request.form.get('uuid')
+        selected_parameters = request.form.getlist('cdParameter')
+
+        if not name or not latitude or not longitude or not uuid:
+            cursor.execute("SELECT id, name, unit FROM typeParameters")
+            parameters = cursor.fetchall()
+            return render_template("add_station.html", error="Preencha todos os campos obrigatórios.", parameters=parameters)
+
+        if len(selected_parameters) == 0:
+            cursor.execute("SELECT id, name, unit FROM typeParameters")
+            parameters = cursor.fetchall()
+            return render_template("add_station.html", error="Selecione pelo menos um parâmetro.", parameters=parameters)
+
+        try:
+            cursor.execute(
+                "INSERT INTO stations (name, latitude, longitude, uuid) VALUES (%s, %s, %s, %s)",
+                (name, latitude, longitude, uuid)
+            )
+            station_id = cursor.lastrowid
+
+            for param_id in selected_parameters:
+                cursor.execute(
+                    "INSERT INTO parameters (cdStation, cdTypeParameter) VALUES (%s, %s)",
+                    (station_id, param_id)
+                )
+
+            connection.commit()
+            success = "Estação cadastrada com sucesso!"
+        except pymysql.err.IntegrityError:
+            connection.rollback()
+            error = "UUID já existe no banco de dados."
+            cursor.execute("SELECT id, name, unit FROM typeParameters")
+            parameters = cursor.fetchall()
+            return render_template("add_station.html", error=error, parameters=parameters)
+        finally:
+            connection.close()
+
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute("SELECT id, name, unit FROM typeParameters")
+        parameters = cursor.fetchall()
+        connection.close()
+        return render_template("add_station.html", success=success, parameters=parameters)
+
+    cursor.execute("SELECT id, name, unit FROM typeParameters")
+    parameters = cursor.fetchall()
+    connection.close()
+    return render_template("add_station.html", parameters=parameters)
+
+
+@app.route('/parameters')
+@nocache
+def parameters():
+    if 'user_id' not in session:
+        return redirect(url_for('index'))
+
+    connection = get_db_connection()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM typeParameters ORDER BY name")
+    parameters = cursor.fetchall()
+    cursor.close()
+    connection.close()
+
+    return render_template('parameters.html', parameters=parameters)
+
+@app.route('/add_parameter', methods=['GET', 'POST'])
+@nocache
+def add_parameter():
+    if 'user_id' not in session:
+        return redirect(url_for('index'))
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT id, name FROM stations")
+    stations = cursor.fetchall()
+
+    if request.method == 'POST':
+        name = request.form.get('name')
+        unit = request.form.get('unit')
+        typeJson = request.form.get('typeJson')
+        decimalPlaces = request.form.get('decimalPlaces')
+
+        if not name or not unit or not typeJson or not decimalPlaces:
+            return render_template("add_parameter.html", error="Preencha todos os campos obrigatórios.", stations=stations)
+
+        try:
+            cursor.execute("""
+                INSERT INTO typeParameters (name, unit, typeJson, numberOfDecimalPlaces)
+                VALUES (%s, %s, %s, %s)
+            """, (name, unit, typeJson, decimalPlaces))
+            idTypeParameter = cursor.lastrowid
+
+
+            cursor.execute("""
+                INSERT INTO parameters (cdTypeParameter)
+                VALUES (%s)
+            """, (idTypeParameter))
+
+            connection.commit()
+            return render_template("add_parameter.html", success="Parâmetro cadastrado com sucesso!", stations=stations)
+        except pymysql.err.IntegrityError as e:
+            return render_template("add_parameter.html", error=f"Erro de integridade: {e}", stations=stations)
+        finally:
+            connection.close()
+
+    return render_template("add_parameter.html", stations=stations)
+
+
+
 if __name__ == '__main__':
-    app.run(debug=True) 
+    app.run(debug=True)

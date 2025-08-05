@@ -291,3 +291,7 @@ input {
     flex-direction: column;
     gap: 20px;
 }
+.adminCard p a {
+    color: #0097B2;
+    text-decoration: underline;
+}

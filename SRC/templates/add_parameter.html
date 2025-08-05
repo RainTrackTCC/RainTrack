@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Adicionar Parâmetro{% endblock %}
+
+{% block content %}
+<div class="centeredContent">
+    <div class="adminCard">
+        <h1 class="title">Cadastrar Novo Parâmetro</h1>
+
+        {% if error %}
+            <p style="color: red;">{{ error }}</p>
+        {% endif %}
+        {% if success %}
+            <p style="color: green;">{{ success }}</p>
+        {% endif %}
+
+        <form class="form" action="{{ url_for('add_parameter') }}" method="POST">
+            <div class="formInputs">
+                <div class="input">
+                    <label for="name">Nome do Parâmetro</label>
+                    <input type="text" name="name" id="name" required />
+                </div>
+
+                <div class="input">
+                    <label for="unit">Unidade</label>
+                    <input type="text" name="unit" id="unit" required />
+                </div>
+
+                <div class="input">
+                    <label for="typeJson">Tipo JSON</label>
+                    <input type="text" name="typeJson" id="typeJson" required />
+                </div>
+
+                <div class="input">
+                    <label for="decimalPlaces">Casas decimais</label>
+                    <input type="number" name="decimalPlaces" id="decimalPlaces" required />
+                </div>
+
+                <div class="submit">
+                    <input type="submit" value="CADASTRAR PARÂMETRO" />
+                </div>
+            </div>
+        </form>
+        <p><a href="{{ url_for('parameters') }}">Voltar para a lista</a></p>
+    </div>
+</div>
+{% endblock %}

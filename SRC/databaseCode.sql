@@ -26,8 +26,7 @@ CREATE TABLE typeParameters (
     typeJson VARCHAR(255) NOT NULL,
     name VARCHAR(255) NOT NULL UNIQUE,
     unit VARCHAR(255) NOT NULL,
-    numberOfDecimalPlaces INT NOT NULL,
-    cdParameter INT
+    numberOfDecimalPlaces INT NOT NULL
 );
 
 CREATE TABLE parameters (
@@ -40,11 +39,7 @@ CREATE TABLE parameters (
 
 ALTER TABLE stations
 ADD CONSTRAINT fk_station_parameter
-FOREIGN KEY (cdParameter) REFERENCES parameters(id);
-
-ALTER TABLE typeParameters
-ADD CONSTRAINT fk_typeparameter_parameter
-FOREIGN KEY (cdParameter) REFERENCES parameters(id);
+FOREIGN KEY (cdParameter) REFERENCES parameters(id);    
 
 CREATE TABLE measures (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,

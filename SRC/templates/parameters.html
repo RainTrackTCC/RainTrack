@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Parâmetros{% endblock %}
+
+{% block content %}
+<div class="centeredContent">
+    <div class="adminCard">
+        <h1 class="title">Parâmetros Cadastrados</h1>
+
+        {% if parameters %}
+            <ul>
+                {% for param in parameters %}
+                    <li>
+                        <strong>{{ param.name }}</strong> ({{ param.unit }}) — Estação: {{ param.station_name }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Nenhum parâmetro cadastrado ainda.</p>
+        {% endif %}
+
+        <div class="submit" style="margin-top: 20px;">
+            <a href="{{ url_for('add_parameter') }}">
+                <input type="button" value="ADICIONAR NOVO PARÂMETRO">
+            </a>
+        </div>
+
+        <p><a href="{{ url_for('home') }}">Voltar para o Início</a></p>
+    </div>
+</div>
+{% endblock %}

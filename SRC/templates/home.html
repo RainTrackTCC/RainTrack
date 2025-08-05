@@ -3,6 +3,7 @@
 {% block title %}Página Home{% endblock %}
 
 {% block content %}
+<p><a href="{{ url_for('logout') }}">Sair da conta</a></p>
     {% if user_name %}
       <h1>Bem-vindo, {{ user_name }}!</h1>
     {% else %}

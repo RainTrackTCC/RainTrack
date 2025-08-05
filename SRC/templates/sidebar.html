@@ -21,12 +21,12 @@
     </a>
 
     {% if user_role == 1 %}
-    <a href="#">
+    <a href="{{ url_for('parameters') }}">
       <i><ion-icon name="albums"></ion-icon></i>
       <span>Parâmetros</span>
     </a>
 
-    <a href="#">
+    <a href="{{ url_for('stations') }}">
       <i><ion-icon name="cellular"></ion-icon></i>
       <span>Estações</span>
     </a>
