@@ -37,8 +37,16 @@
                 </div>
 
                 <div class="input">
-                    <label for="cdParameter">Código do Parâmetro</label>
-                    <input type="number" name="cdParameter" id="cdParameter" />
+                    <label for="cdParameter">Selecione os Parâmetros</label>
+                    <div class="checkbox-group">
+                        {% for param in parameters %}
+                            <label>
+                                <input type="checkbox" name="cdParameter" value="{{ param.id }}">
+                                {{ param.name }} ({{ param.unit }})
+                            </label>
+                            <br>
+                        {% endfor %}
+                    </div>
                 </div>
 
                 <div class="submit">

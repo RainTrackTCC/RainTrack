@@ -20,6 +20,13 @@ def nocache(view):
         return response
     return no_cache_view
 
+@app.context_processor
+def inject_user():
+    return {
+        'user_name': session.get('user_name'),
+        'user_role': session.get('user_role')
+    }
+
 def get_db_connection():
     connection = pymysql.connect(
         host = os.getenv('DB_HOST'),
@@ -93,14 +100,17 @@ def logout():
 @nocache
 def home():
     if 'user_id' not in session:
-        return redirect(url_for('index'))
+        session['user_name'] = "Convidado"
+        session['user_role'] = 0
+        session['user_id'] = 12345678910
+        return redirect(url_for('home'))
 
     # dados = get_data()
     user_name = session.get('user_name')
     user_role = session.get('user_role')
-    return render_template("home.html", user_name=user_name, user_role=user_role)
+    return render_template("home.html")
     # print(dados)
-    # return render_template("home.html", dados=dados, user_name=user_name, user_role=user_role)
+    # return render_template("home.html", dados=dados)
 
 @app.route('/admin', methods=['GET', 'POST'])
 @nocache
@@ -125,7 +135,7 @@ def admin():
 
         if existing_user:
             error = "Email ou CPF já existe."
-            return render_template("admin.html", user_name=user_name, user_role=user_role, error=error)
+            return render_template("admin.html", error=error)
 
         cursor.execute("INSERT INTO users (name, email, cpf, password, role) VALUES (%s, %s, %s, %s, %s)",
                        (name, email, cpf, password, role))
@@ -133,9 +143,9 @@ def admin():
         cursor.close()
         connection.close()
         success = "Usuário cadastrado com sucesso!"
-        return render_template("admin.html", user_name=user_name, user_role=user_role, success=success)
+        return render_template("admin.html", success=success)
 
-    return render_template("admin.html", user_name=user_name, user_role=user_role)
+    return render_template("admin.html")
 
 @app.route('/stations')
 @nocache
@@ -156,32 +166,35 @@ def add_station():
         return redirect(url_for('index'))
 
     connection = get_db_connection()
-    cursor = connection.cursor(dictionary=True)
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+    # Consultar todos os parâmetros disponíveis
+    cursor.execute("SELECT id, name FROM typeParameters")
+    parameters = cursor.fetchall()
 
     if request.method == 'POST':
         name = request.form.get('name')
         latitude = request.form.get('latitude')
         longitude = request.form.get('longitude')
         uuid = request.form.get('uuid')
-        selected_parameters = request.form.getlist('cdParameter')
+        selected_parameters = request.form.getlist('cdParameter')  # Recebe uma lista de IDs de parâmetros
 
+        # Verificar se todos os campos obrigatórios foram preenchidos
         if not name or not latitude or not longitude or not uuid:
-            cursor.execute("SELECT id, name, unit FROM typeParameters")
-            parameters = cursor.fetchall()
             return render_template("add_station.html", error="Preencha todos os campos obrigatórios.", parameters=parameters)
 
-        if len(selected_parameters) == 0:
-            cursor.execute("SELECT id, name, unit FROM typeParameters")
-            parameters = cursor.fetchall()
+        if not selected_parameters:
             return render_template("add_station.html", error="Selecione pelo menos um parâmetro.", parameters=parameters)
 
         try:
+            # Inserir a estação
             cursor.execute(
                 "INSERT INTO stations (name, latitude, longitude, uuid) VALUES (%s, %s, %s, %s)",
                 (name, latitude, longitude, uuid)
             )
             station_id = cursor.lastrowid
 
+            # Para cada parâmetro selecionado, insira a relação na tabela de junção 'parameters'
             for param_id in selected_parameters:
                 cursor.execute(
                     "INSERT INTO parameters (cdStation, cdTypeParameter) VALUES (%s, %s)",
@@ -192,24 +205,16 @@ def add_station():
             success = "Estação cadastrada com sucesso!"
         except pymysql.err.IntegrityError:
             connection.rollback()
-            error = "UUID já existe no banco de dados."
-            cursor.execute("SELECT id, name, unit FROM typeParameters")
-            parameters = cursor.fetchall()
+            error = "Erro ao cadastrar a estação. Verifique se o UUID já existe."
             return render_template("add_station.html", error=error, parameters=parameters)
         finally:
             connection.close()
 
-        connection = get_db_connection()
-        cursor = connection.cursor(dictionary=True)
-        cursor.execute("SELECT id, name, unit FROM typeParameters")
-        parameters = cursor.fetchall()
-        connection.close()
         return render_template("add_station.html", success=success, parameters=parameters)
 
-    cursor.execute("SELECT id, name, unit FROM typeParameters")
-    parameters = cursor.fetchall()
-    connection.close()
     return render_template("add_station.html", parameters=parameters)
+
+
 
 
 @app.route('/parameters')
