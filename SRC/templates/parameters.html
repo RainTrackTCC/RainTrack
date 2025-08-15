@@ -10,8 +10,11 @@
         {% if parameters %}
             <ul>
                 {% for param in parameters %}
-                    <li>
-                        <strong>{{ param.name }}</strong> ({{ param.unit }}) — Estação: {{ param.station_name }}
+                    <li class="cardParameter">
+                        <strong>{{ param.name }}</strong> <br>
+                        ({{ param.unit }}) <br>
+                        ({{ param.typeJson }}) <br>
+                        ({{ param.numberOfDecimalPlaces}})  
                     </li>
                 {% endfor %}
             </ul>

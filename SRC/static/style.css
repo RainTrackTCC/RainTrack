@@ -309,3 +309,46 @@ label input{
     color: #0097B2;
     text-decoration: underline;
 }
+
+ul{
+    list-style: none;
+}
+
+.cardParameter{
+    padding-block: 20px;
+    padding-inline: 10px;
+    max-width: 400px;
+    min-width: 200px;
+    max-height: 400px;
+    min-height: 100px;
+    border-radius: 15px;
+    border: solid 1px #0097B2;
+}
+tbody tr:nth-child(odd) {
+    background-color: #f0f0f0; /* white */
+}
+  
+  tbody tr:nth-child(even) {
+    background-color: #dddddd; /* gray */
+}
+
+table{
+    width: 100%;
+    border-collapse: collapse;
+}
+table td{
+    text-align: center;
+}
+
+table tr, th, td{
+    font-size: 20px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+.hv{
+    transition: all 0.1s;
+}
+.hv:hover {
+    background-color: #b8b8b8;
+}

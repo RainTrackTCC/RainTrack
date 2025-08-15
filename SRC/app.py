@@ -275,6 +275,21 @@ def add_parameter():
 
     return render_template("add_parameter.html", stations=stations)
 
+@app.route('/users', methods=['GET', 'POST'])
+@nocache
+def users():
+    user_name = session.get('user_name')
+    user_role = session.get('user_role')
+
+    if not user_name or user_role != 1:
+        return redirect(url_for('index'))
+    
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT id, name, cpf, email, role, createdAt FROM users ORDER BY createdAt DESC")
+    users = cursor.fetchall()
+    connection.close()
+    return render_template("users.html", users=users)
 
 
 if __name__ == '__main__':
