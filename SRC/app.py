@@ -37,27 +37,6 @@ def get_db_connection():
     )
     return connection
 
-def get_data():
-    connection = get_db_connection()
-    try:
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT temperature, humidity, timestamp FROM measures ORDER BY timestamp")
-            results = cursor.fetchall()
-
-        tempo = [linha["timestamp"].strftime("%H:%M") for linha in results]
-        temperaturas = [linha["temperature"] for linha in results]
-        humidades = [linha["humidity"] for linha in results]
-
-        return {
-            "categories": tempo,
-            "series": [
-                { "name": "Temperatura (°C)", "data": temperaturas },
-                { "name": "Humidade (%)", "data": humidades }
-            ]
-        }
-    finally:
-        connection.close()
-
 @app.route('/', methods=['GET', 'POST'])
 @nocache
 def index():
@@ -105,12 +84,9 @@ def home():
         session['user_id'] = 12345678910
         return redirect(url_for('home'))
 
-    # dados = get_data()
     user_name = session.get('user_name')
     user_role = session.get('user_role')
     return render_template("home.html")
-    # print(dados)
-    # return render_template("home.html", dados=dados)
 
 @app.route('/admin', methods=['GET', 'POST'])
 @nocache
@@ -169,7 +145,7 @@ def add_station():
     cursor = connection.cursor(pymysql.cursors.DictCursor)
 
     # Consultar todos os parâmetros disponíveis
-    cursor.execute("SELECT id, name FROM typeParameters")
+    cursor.execute("SELECT id, name, unit FROM typeParameters")
     parameters = cursor.fetchall()
 
     if request.method == 'POST':
@@ -177,9 +153,9 @@ def add_station():
         latitude = request.form.get('latitude')
         longitude = request.form.get('longitude')
         uuid = request.form.get('uuid')
-        selected_parameters = request.form.getlist('cdParameter')  # Recebe uma lista de IDs de parâmetros
+        uuid_clean = uuid.replace(":", "").upper()
+        selected_parameters = request.form.getlist('cdParameter')  # IDs dos parâmetros
 
-        # Verificar se todos os campos obrigatórios foram preenchidos
         if not name or not latitude or not longitude or not uuid:
             return render_template("add_station.html", error="Preencha todos os campos obrigatórios.", parameters=parameters)
 
@@ -190,11 +166,11 @@ def add_station():
             # Inserir a estação
             cursor.execute(
                 "INSERT INTO stations (name, latitude, longitude, uuid) VALUES (%s, %s, %s, %s)",
-                (name, latitude, longitude, uuid)
+                (name, latitude, longitude, uuid_clean)
             )
             station_id = cursor.lastrowid
 
-            # Para cada parâmetro selecionado, insira a relação na tabela de junção 'parameters'
+            # Para cada parâmetro selecionado, atualizar o registro existente com cdStation NULL
             for param_id in selected_parameters:
                 cursor.execute(
                     "INSERT INTO parameters (cdStation, cdTypeParameter) VALUES (%s, %s)",
@@ -211,6 +187,7 @@ def add_station():
             connection.close()
 
         return render_template("add_station.html", success=success, parameters=parameters)
+
 
     return render_template("add_station.html", parameters=parameters)
 
@@ -258,13 +235,6 @@ def add_parameter():
                 INSERT INTO typeParameters (name, unit, typeJson, numberOfDecimalPlaces)
                 VALUES (%s, %s, %s, %s)
             """, (name, unit, typeJson, decimalPlaces))
-            idTypeParameter = cursor.lastrowid
-
-
-            cursor.execute("""
-                INSERT INTO parameters (cdTypeParameter)
-                VALUES (%s)
-            """, (idTypeParameter))
 
             connection.commit()
             return render_template("add_parameter.html", success="Parâmetro cadastrado com sucesso!", stations=stations)
@@ -290,6 +260,48 @@ def users():
     users = cursor.fetchall()
     connection.close()
     return render_template("users.html", users=users)
+
+@app.route('/graphs')
+@nocache
+def graphs():
+    if 'user_id' not in session:
+        return redirect(url_for('index'))
+
+    connection = get_db_connection()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+    
+    # Pega todas as estações
+    cursor.execute("SELECT id, name, uuid FROM stations ORDER BY createdAt DESC")
+    stations = cursor.fetchall()
+
+    for station in stations:
+        # Pega todos os parâmetros desta estação
+        cursor.execute("""
+            SELECT tp.name, tp.unit, m.value, m.measureTime
+            FROM parameters p
+            JOIN typeParameters tp ON p.cdTypeParameter = tp.id
+            JOIN measures m ON m.cdParameter = p.id
+            WHERE p.cdStation = %s
+            ORDER BY m.measureTime
+        """, (station['id'],))
+        measures = cursor.fetchall()
+
+
+        # Agrupa os dados por parâmetro
+        param_dict = {}
+        categories = sorted(list({m['measureTime'].strftime("%H:%M") for m in measures}))  # horários
+        for m in measures:
+            key = f"{m['name']} ({m['unit']})"
+            if key not in param_dict:
+                param_dict[key] = [None]*len(categories)
+            idx = categories.index(m['measureTime'].strftime("%H:%M"))
+            param_dict[key][idx] = m['value']
+
+        station['categories'] = categories
+        station['series'] = [{"name": k, "data": v} for k,v in param_dict.items()]
+
+    connection.close()
+    return render_template('graphs.html', stations=stations)
 
 
 if __name__ == '__main__':

@@ -57,4 +57,42 @@
         <p><a href="{{ url_for('stations') }}">Voltar para a lista</a></p>
     </div>
 </div>
+
+<script>
+document.getElementById("uuid").addEventListener("input", function (e) {
+    let value = e.target.value.toUpperCase().replace(/[^A-F0-9]/g, ""); // mantém só HEX
+    let uuid = "";
+
+    for (let i = 0; i < value.length; i++) {
+        if (i > 0 && i % 2 === 0) {
+            uuid += ":";
+        }
+        uuid += value[i];
+    }
+
+    e.target.value = uuid.substring(0, 17); // limita ao tamanho do uuid
+});
+</script>
+<script>
+function formatCoord(input) {
+    input.addEventListener("input", function(e) {
+        let value = e.target.value.replace(/[^0-9\.\-]/g, "");
+
+        if (value.includes("-")) {
+            value = "-" + value.replace(/-/g, "");
+        }
+
+        // Garante apenas um ponto decimal
+        const parts = value.split(".");
+        if (parts.length > 2) {
+            value = parts[0] + "." + parts[1];
+        }
+
+        e.target.value = value;
+    });
+}
+
+formatCoord(document.getElementById("latitude"));
+formatCoord(document.getElementById("longitude"));
+</script>
 {% endblock %}

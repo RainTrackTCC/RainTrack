@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Gráficos{% endblock %}
+
+{% block content %}
+<div class="centeredContent">
+    <h1 class="title">Gráficos das Estações</h1>
+
+    {% if stations %}
+        {% for station in stations %}
+            <div class="graphCard">
+                <h2>{{ station.name }}</h2>
+                <p>UUID: {{ station.uuid }}</p>
+                <div id="chart-{{ station.id }}" style="width:100%; height:400px;"></div>
+
+                <script>
+                    (function() {
+                        const categories = JSON.parse('{{ station.categories | tojson | safe }}');
+                        const series = JSON.parse('{{ station.series | tojson | safe}}');
+
+                        Highcharts.chart('chart-{{ station.id }}', {
+                            chart: { type: 'line' },
+                            title: { text: '{{ station.name }}' },
+                            xAxis: { categories: categories },
+                            yAxis: { title: { text: 'Valores' } },
+                            series: series,
+                            tooltip: { shared: true, crosshairs: true },
+                            credits: { enabled: false }
+                        });
+                    })();
+                </script>
+
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Nenhum gráfico disponível.</p>
+    {% endif %}
+</div>
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+{% endblock %}

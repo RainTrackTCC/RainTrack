@@ -5,8 +5,8 @@
 #define DHTPIN 4
 #define DHTTYPE DHT11
 
-char* ssid = "Wifi-Igor";
-char* pwd = "isabelli2014";
+char* ssid = "Igor_2G";
+char* pwd = "Isabelli2014@";
 char* mqtt_server = "test.mosquitto.org";
 
 WiFiClient wclient;
@@ -14,7 +14,9 @@ PubSubClient mqttClient(wclient);
 DHT dht(DHTPIN, DHTTYPE);
 
 unsigned long lastSend = 0;
-const long interval = 10000; // 5 minutos
+const long interval = 60000;
+
+String uuid;
 
 void connectWifi(){
   WiFi.begin(ssid, pwd);
@@ -23,7 +25,12 @@ void connectWifi(){
     delay(500);
     Serial.print(".");
   }
-  Serial.println("\nConectado ao WiFi");
+
+  // Pega o MAC e remove os ':'
+  uuid = WiFi.macAddress();
+  uuid.replace(":", "");
+
+  Serial.println("\nConectado ao WiFi, UUID: " + uuid);
 }
 
 void connectMqtt(){
@@ -53,6 +60,7 @@ void loop(){
   unsigned long now = millis();
   if (now - lastSend >= interval){
     lastSend = now;
+
     float h = dht.readHumidity();
     float t = dht.readTemperature();
 
@@ -61,8 +69,11 @@ void loop(){
       return;
     }
 
-    char msg[100];
-    snprintf(msg, sizeof(msg), "{\"temperature\": %.2f, \"humidity\": %.2f}", t, h);
+    char msg[150];
+    snprintf(msg, sizeof(msg),
+             "{\"uuid\": \"%s\", \"TEMPERATURA\": %.2f, \"HUMIDADE\": %.2f}",
+             uuid.c_str(), t, h);
+
     Serial.print("Enviando: ");
     Serial.println(msg);
 

@@ -4,8 +4,9 @@
 
 {% block content %}
 <div class="centeredContent">
-    <div class="userCard">
+    <div class="userCard" style="display: flex;  flex-direction: column; align-items: center; justify-content: center; gap: 20px;">
         <h1 class="title">Usuários Cadastrados</h1>
+
         <table>
             <tr>
                 <th>Id</th>
@@ -24,10 +25,10 @@
                                 <td>{{ user.cpf }}</td>
                                 <td>{{ user.createdAt }}</td>
                                 <td>
-                                    <a class='btn' href = ''>Editar</a>
-                                    <a class='btn' href = ''>Excluir</a>
+                                    <p><a href = '#'>Editar</a></p>
+                                    <p><a href = '#'>Excluir</a></p>
                                 </td>
-                            </tr>";
+                            </tr>
                 {% endfor %}
                 {% else %}
                     <tr><td colspan='5'>Nenhum registro encontrado</td></tr>

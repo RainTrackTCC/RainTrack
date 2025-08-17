@@ -3,13 +3,14 @@
 {% block title %}Página Home{% endblock %}
 
 {% block content %}
-<p><a href="{{ url_for('logout') }}">Sair da conta</a></p>
+  <div class="centeredContent">
     {% if user_name %}
-      <h1>Bem-vindo, {{ user_name }}!</h1>
+      <h1 class="title">Bem-vindo, {{ user_name }}!</h1>
     {% else %}
-      <h1>Bem-vindo, visitante!</h1>
+      <h1 class="title">Bem-vindo, visitante!</h1>
     {% endif %}
-    
+    <p><a href="{{ url_for('logout') }}">Sair da conta</a></p>
+  </div>
 
   
 {% endblock %}
