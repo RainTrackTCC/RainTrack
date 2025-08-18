@@ -78,6 +78,7 @@ def logout():
 @app.route('/home')
 @nocache
 def home():
+    session.clear()
     if 'user_id' not in session:
         session['user_name'] = "Convidado"
         session['user_role'] = 0
@@ -286,7 +287,6 @@ def graphs():
         """, (station['id'],))
         measures = cursor.fetchall()
 
-
         # Agrupa os dados por parâmetro
         param_dict = {}
         categories = sorted(list({m['measureTime'].strftime("%H:%M") for m in measures}))  # horários
@@ -303,6 +303,18 @@ def graphs():
     connection.close()
     return render_template('graphs.html', stations=stations)
 
+@app.route('/deleteUser/<int:idUser>')
+def deleteUser(idUser):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    
+    cursor.execute("DELETE FROM users WHERE id = %s", (idUser,))
+    connection.commit()
+    
+    cursor.close()
+    connection.close()
+
+    return redirect(url_for('users'))
 
 if __name__ == '__main__':
     app.run(debug=True)

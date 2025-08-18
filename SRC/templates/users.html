@@ -25,8 +25,8 @@
                                 <td>{{ user.cpf }}</td>
                                 <td>{{ user.createdAt }}</td>
                                 <td>
-                                    <p><a href = '#'>Editar</a></p>
-                                    <p><a href = '#'>Excluir</a></p>
+                                    <p><a href = "{{ url_for('editUser', idUser=user.id)}}">Editar</a></p>
+                                    <p><a href = "{{ url_for('deleteUser', idUser=user.id)}}">Excluir</a></p>
                                 </td>
                             </tr>
                 {% endfor %}
@@ -34,11 +34,6 @@
                     <tr><td colspan='5'>Nenhum registro encontrado</td></tr>
                 {% endif %}
         </table>
-        <div class="submit" style="margin-top: 20px;">
-            <a href="{{ url_for('add_parameter') }}">
-                <input type="button" value="ADICIONAR NOVO PARÂMETRO">
-            </a>
-        </div>
 
         <p><a href="{{ url_for('home') }}">Voltar para o Início</a></p>
     </div>
