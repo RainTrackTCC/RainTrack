@@ -4,36 +4,42 @@
 
 {% block content %}
 <div class="centeredContent">
-    <div class="userCard" style="display: flex;  flex-direction: column; align-items: center; justify-content: center; gap: 20px;">
+    <div class="adminCard">
         <h1 class="title">Usuários Cadastrados</h1>
 
-        <table>
-            <tr>
-                <th>Id</th>
-                <th>Nome</th>
-                <th>Email</th>
-                <th>CPF</th>
-                <th>Criado em</th>
-                <th>Ações</th>
-            </tr>
-            {% if users %}
-                {% for user in users %}
-                    <tr class= 'hv'>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>CPF</th>
+                        <th>Criado em</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if users %}
+                        {% for user in users %}
+                            <tr class='hv'>
                                 <td>{{ user.id }}</td>
                                 <td>{{ user.name }}</td>
                                 <td>{{ user.email }}</td>
                                 <td>{{ user.cpf }}</td>
                                 <td>{{ user.createdAt }}</td>
                                 <td>
-                                    <p><a href = "{{ url_for('editUser', idUser=user.id)}}">Editar</a></p>
-                                    <p><a href = "{{ url_for('deleteUser', idUser=user.id)}}">Excluir</a></p>
+                                    <p><a href="{{ url_for('editUser', idUser=user.id) }}">Editar</a></p>
+                                    <p><a href="{{ url_for('deleteUser', idUser=user.id) }}">Excluir</a></p>
                                 </td>
                             </tr>
-                {% endfor %}
-                {% else %}
-                    <tr><td colspan='5'>Nenhum registro encontrado</td></tr>
-                {% endif %}
-        </table>
+                        {% endfor %}
+                    {% else %}
+                        <tr><td colspan='6'>Nenhum registro encontrado</td></tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
 
         <p><a href="{{ url_for('home') }}">Voltar para o Início</a></p>
     </div>

@@ -78,7 +78,7 @@ def logout():
 @app.route('/home')
 @nocache
 def home():
-    session.clear()
+    
     if 'user_id' not in session:
         session['user_name'] = "Convidado"
         session['user_role'] = 0
