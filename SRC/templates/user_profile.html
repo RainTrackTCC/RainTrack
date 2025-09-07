@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Meu Perfil{% endblock %}
+
+{% block content %}
+<div class="centeredContent">
+    <div class="adminCard">
+        <h1 class="title">Meu Perfil</h1>
+        
+        <div class="profile-info">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <ion-icon name="person-circle-outline"></ion-icon>
+                </div>
+                <div class="profile-name">
+                    <h2>{{ user.name }}</h2>
+                    <p class="profile-role">
+                        {% if user.role == 1 %}
+                            <ion-icon name="shield-checkmark-outline"></ion-icon>
+                            Administrador
+                        {% else %}
+                            <ion-icon name="person-outline"></ion-icon>
+                            Usuário
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            
+            <div class="profile-details">
+                <div class="detail-item">
+                    <div class="detail-label">
+                        <ion-icon name="mail-outline"></ion-icon>
+                        <span>Email</span>
+                    </div>
+                    <div class="detail-value">{{ user.email }}</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">
+                        <ion-icon name="card-outline"></ion-icon>
+                        <span>CPF</span>
+                    </div>
+                    <div class="detail-value">{{ user.cpf }}</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">
+                        <ion-icon name="calendar-outline"></ion-icon>
+                        <span>Membro desde</span>
+                    </div>
+                    <div class="detail-value">{{ user.createdAt.strftime('%d/%m/%Y') if user.createdAt else 'N/A' }}</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">
+                        <ion-icon name="id-card-outline"></ion-icon>
+                        <span>ID do Usuário</span>
+                    </div>
+                    <div class="detail-value">#{{ user.id }}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="profile-actions">
+            <a href="{{ url_for('home') }}" class="btn-secondary">
+                <ion-icon name="home-outline"></ion-icon>
+                <span>Voltar ao Início</span>
+            </a>
+            <a href="{{ url_for('logout') }}" class="btn-primary">
+                <ion-icon name="log-out-outline"></ion-icon>
+                <span>Sair da Conta</span>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

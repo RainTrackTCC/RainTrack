@@ -1,16 +1,40 @@
 {% extends 'base.html' %}
 
-{% block title %}Página Home{% endblock %}
+{% block title %}Início{% endblock %}
 
 {% block content %}
-  <div class="centeredContent">
-    {% if user_name %}
-      <h1 class="title">Bem-vindo, {{ user_name }}!</h1>
-    {% else %}
-      <h1 class="title">Bem-vindo, visitante!</h1>
-    {% endif %}
-    <p><a href="{{ url_for('logout') }}">Sair da conta</a></p>
-  </div>
+<div class="centeredContent">
+    <div class="adminCard full-width-card">
+        <h1 class="title">Bem-vindo ao RainTrack!</h1>
+        
+        <div class="home-section">
+            <p>O <strong>RainTrack</strong> é a sua solução completa para monitoramento inteligente de estações meteorológicas. Com uma interface intuitiva e gráficos detalhados, você tem acesso em tempo real a dados cruciais para a sua tomada de decisão.</p>
+            <p>Nossa plataforma foi desenvolvida para oferecer precisão e facilidade de uso, permitindo que você acompanhe parâmetros como temperatura, umidade, pressão e muito mais, diretamente do seu navegador.</p>
+        </div>
 
-  
+        <div class="home-section highlight-section">
+            <h2>Recursos Principais:</h2>
+            <ul>
+                <li><ion-icon name="analytics-outline"></ion-icon> Gráficos Interativos e Personalizáveis</li>
+                <li><ion-icon name="map-outline"></ion-icon> Gerenciamento de Estações e Parâmetros</li>
+                <li><ion-icon name="person-outline"></ion-icon> Controle de Usuários e Perfis</li>
+                <li><ion-icon name="phone-portrait-outline"></ion-icon> Design Responsivo para Todos os Dispositivos</li>
+            </ul>
+        </div>
+
+        <div class="home-section">
+            <h2>Comece a Monitorar Agora!</h2>
+            <p>Explore as funcionalidades do RainTrack e descubra como podemos otimizar o seu monitoramento meteorológico. Navegue pelo menu lateral para acessar os gráficos, gerenciar suas estações e parâmetros, ou verificar seu perfil.</p>
+            <div class="action-buttons">
+                <a href="{{ url_for('graphs') }}" class="btn-primary">
+                    <ion-icon name="bar-chart-outline"></ion-icon> Ver Gráficos
+                </a>
+                <a href="{{ url_for('stations') }}" class="btn-secondary">
+                    <ion-icon name="location-outline"></ion-icon> Minhas Estações
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
+

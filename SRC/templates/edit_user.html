@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Usuário{% endblock %}
+
+{% block content %}
+<div class="centeredContent">
+    <div class="formCard">
+        <h1 class="title">Editar Usuário</h1>
+        
+        {% if error %}
+            <div class="error-message">
+                <ion-icon name="alert-circle-outline"></ion-icon>
+                <span>{{ error }}</span>
+            </div>
+        {% endif %}
+        
+        {% if success %}
+            <div class="success-message">
+                <ion-icon name="checkmark-circle-outline"></ion-icon>
+                <span>{{ success }}</span>
+            </div>
+        {% endif %}
+
+        <form method="POST" class="form">
+            <div class="formInputs">
+                <div class="input">
+                    <label for="name">Nome:</label>
+                    <input type="text" id="name" name="name" value="{{ user.name }}" required>
+                </div>
+
+                <div class="input">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" value="{{ user.email }}" required>
+                </div>
+
+                <div class="input">
+                    <label for="cpf">CPF:</label>
+                    <input type="text" id="cpf" name="cpf" value="{{ user.cpf }}" required>
+                </div>
+
+                <div class="input">
+                    <label for="password">Nova Senha (deixe em branco para não alterar):</label>
+                    <input type="password" id="password" name="password">
+                </div>
+
+                <div class="input">
+                    <label for="role">Nível de Acesso:</label>
+                    <select id="role" name="role" required>
+                        <option value="0" {% if user.role == 0 %}selected{% endif %}>Usuário Comum</option>
+                        <option value="1" {% if user.role == 1 %}selected{% endif %}>Administrador</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="submit">
+                <input type="submit" value="ATUALIZAR USUÁRIO">
+                <div class="action-links">
+                    <a href="{{ url_for("users") }}">
+                        <ion-icon name="arrow-back-outline"></ion-icon>
+                        Voltar para Usuários
+                    </a>
+                    <a href="{{ url_for("home") }}">
+                        <ion-icon name="home-outline"></ion-icon>
+                        Ir para Início
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+

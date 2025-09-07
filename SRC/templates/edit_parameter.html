@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Parâmetro{% endblock %}
+
+{% block content %}
+<div class="centeredContent">
+    <div class="formCard">
+        <h1 class="title">Editar Parâmetro</h1>
+        
+        {% if error %}
+            <div class="error-message">
+                <ion-icon name="alert-circle-outline"></ion-icon>
+                <span>{{ error }}</span>
+            </div>
+        {% endif %}
+        
+        {% if success %}
+            <div class="success-message">
+                <ion-icon name="checkmark-circle-outline"></ion-icon>
+                <span>{{ success }}</span>
+            </div>
+        {% endif %}
+
+        <form method="POST" class="form">
+            <div class="formInputs">
+                <div class="input">
+                    <label for="name">Nome do Parâmetro:</label>
+                    <input type="text" id="name" name="name" value="{{ parameter.name }}" required>
+                </div>
+
+                <div class="input">
+                    <label for="unit">Unidade:</label>
+                    <input type="text" id="unit" name="unit" value="{{ parameter.unit }}" required>
+                </div>
+
+                <div class="input">
+                    <label for="typeJson">Tipo JSON:</label>
+                    <select id="typeJson" name="typeJson" required>
+                        <option value="string" {% if parameter.typeJson == 'string' %}selected{% endif %}>String</option>
+                        <option value="number" {% if parameter.typeJson == 'number' %}selected{% endif %}>Number</option>
+                        <option value="boolean" {% if parameter.typeJson == 'boolean' %}selected{% endif %}>Boolean</option>
+                    </select>
+                </div>
+
+                <div class="input">
+                    <label for="decimalPlaces">Número de Casas Decimais:</label>
+                    <input type="number" id="decimalPlaces" name="decimalPlaces" value="{{ parameter.numberOfDecimalPlaces }}" min="0" max="10" required>
+                </div>
+            </div>
+
+            <div class="submit">
+                <input type="submit" value="ATUALIZAR PARÂMETRO">
+                <div class="action-links">
+                    <a href="{{ url_for('parameters') }}">
+                        <ion-icon name="arrow-back-outline"></ion-icon>
+                        Voltar para Parâmetros
+                    </a>
+                    <a href="{{ url_for('home') }}">
+                        <ion-icon name="home-outline"></ion-icon>
+                        Ir para Início
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+

@@ -5,6 +5,7 @@ import pymysql.cursors
 from dotenv import load_dotenv
 import os
 import pymysql
+from datetime import datetime
 
 load_dotenv()
 app = Flask(__name__)
@@ -14,41 +15,40 @@ def nocache(view):
     @wraps(view)
     def no_cache_view(*args, **kwargs):
         response = make_response(view(*args, **kwargs))
-        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
-        response.headers['Pragma'] = 'no-cache'
-        response.headers['Expires'] = '0'
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
         return response
     return no_cache_view
 
 @app.context_processor
 def inject_user():
     return {
-        'user_name': session.get('user_name'),
-        'user_role': session.get('user_role')
+        "user_name": session.get("user_name"),
+        "user_role": session.get("user_role")
     }
 
 def get_db_connection():
     connection = pymysql.connect(
-        host = os.getenv('DB_HOST'),
-        user = os.getenv('DB_USER'),
-        password = os.getenv('DB_PASSWORD'),
-        db = os.getenv('DB_NAME'),
+        host = os.getenv("DB_HOST"),
+        user = os.getenv("DB_USER"),
+        password = os.getenv("DB_PASSWORD"),
+        db = os.getenv("DB_NAME"),
         cursorclass=pymysql.cursors.DictCursor
     )
     return connection
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route("/", methods=["GET", "POST"])
 @nocache
 def index():
-    if request.method == 'POST':
-        entry = request.form.get('entry')
-        password = request.form.get('password')
+    if request.method == "POST":
+        entry = request.form.get("entry")
+        password = request.form.get("password")
         
         if not entry or not password:
-            error_message = 'Por favor, preencha todos os campos.'
-            return render_template('index.html', error=error_message)
+            error_message = "Por favor, preencha todos os campos."
+            return render_template("index.html", error=error_message)
         
-        connection = get_db_connection()
         connection = get_db_connection()
         cursor = connection.cursor(pymysql.cursors.DictCursor)
         cursor.execute("SELECT password, email, name, role, cpf FROM users WHERE email = %s OR cpf = %s", (entry, entry))
@@ -57,53 +57,53 @@ def index():
         connection.close()
 
         if not user:
-            error_message = 'Usuário não encontrado. Verifique seu email ou CPF.'
-        elif user['password'] != password:
-            error_message = 'Senha incorreta. Tente novamente.'
+            error_message = "Usuário não encontrado. Verifique seu email ou CPF."
+        elif user["password"] != password:
+            error_message = "Senha incorreta. Tente novamente."
         else:
-            session['user_name'] = user['name'].split()[0]
-            session['user_role'] = user['role']
-            session['user_id'] = user['cpf']
-            return redirect(url_for('home'))
+            session["user_name"] = user["name"].split()[0]
+            session["user_role"] = user["role"]
+            session["user_id"] = user["cpf"]
+            return redirect(url_for("home"))
 
-        return render_template('index.html', error=error_message)
+        return render_template("index.html", error=error_message)
     
-    return render_template('index.html')
+    return render_template("index.html")
 
-@app.route('/logout')
+@app.route("/logout")
 def logout():
     session.clear()
-    return redirect(url_for('index'))
+    return redirect(url_for("index"))
 
-@app.route('/home')
+@app.route("/home")
 @nocache
 def home():
     
-    if 'user_id' not in session:
-        session['user_name'] = "Convidado"
-        session['user_role'] = 0
-        session['user_id'] = 12345678910
-        return redirect(url_for('home'))
+    if "user_id" not in session:
+        session["user_name"] = "Convidado"
+        session["user_role"] = 0
+        session["user_id"] = 12345678910
+        return redirect(url_for("home"))
 
-    user_name = session.get('user_name')
-    user_role = session.get('user_role')
+    user_name = session.get("user_name")
+    user_role = session.get("user_role")
     return render_template("home.html")
 
-@app.route('/admin', methods=['GET', 'POST'])
+@app.route("/admin", methods=["GET", "POST"])
 @nocache
 def admin():
-    user_name = session.get('user_name')
-    user_role = session.get('user_role')
+    user_name = session.get("user_name")
+    user_role = session.get("user_role")
 
     if not user_name or user_role != 1:
-        return redirect(url_for('index'))
+        return redirect(url_for("index"))
 
-    if request.method == 'POST':
-        name = request.form.get('name')
-        email = request.form.get('email')
-        cpf = request.form.get('cpf')
-        password = request.form.get('password')
-        role = request.form.get('role')
+    if request.method == "POST":
+        name = request.form.get("name")
+        email = request.form.get("email")
+        cpf = request.form.get("cpf")
+        password = request.form.get("password")
+        role = request.form.get("role")
 
         connection = get_db_connection()
         cursor = connection.cursor(pymysql.cursors.DictCursor)
@@ -124,23 +124,23 @@ def admin():
 
     return render_template("admin.html")
 
-@app.route('/stations')
+@app.route("/stations")
 @nocache
 def stations():
-    if 'user_id' not in session:
-        return redirect(url_for('index'))
+    if "user_id" not in session:
+        return redirect(url_for("index"))
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT name, latitude, longitude, uuid FROM stations ORDER BY createdAt DESC")
+    cursor.execute("SELECT id, name, latitude, longitude, uuid FROM stations ORDER BY createdAt DESC")
     stations = cursor.fetchall()
     connection.close()
     return render_template("stations.html", stations=stations)
 
-@app.route('/add_station', methods=['GET', 'POST'])
+@app.route("/add_station", methods=["GET", "POST"])
 @nocache
 def add_station():
-    if 'user_id' not in session:
-        return redirect(url_for('index'))
+    if "user_id" not in session:
+        return redirect(url_for("index"))
 
     connection = get_db_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
@@ -149,13 +149,13 @@ def add_station():
     cursor.execute("SELECT id, name, unit FROM typeParameters")
     parameters = cursor.fetchall()
 
-    if request.method == 'POST':
-        name = request.form.get('name')
-        latitude = request.form.get('latitude')
-        longitude = request.form.get('longitude')
-        uuid = request.form.get('uuid')
+    if request.method == "POST":
+        name = request.form.get("name")
+        latitude = request.form.get("latitude")
+        longitude = request.form.get("longitude")
+        uuid = request.form.get("uuid")
         uuid_clean = uuid.replace(":", "").upper()
-        selected_parameters = request.form.getlist('cdParameter')  # IDs dos parâmetros
+        selected_parameters = request.form.getlist("cdParameter")  # IDs dos parâmetros
 
         if not name or not latitude or not longitude or not uuid:
             return render_template("add_station.html", error="Preencha todos os campos obrigatórios.", parameters=parameters)
@@ -195,11 +195,11 @@ def add_station():
 
 
 
-@app.route('/parameters')
+@app.route("/parameters")
 @nocache
 def parameters():
-    if 'user_id' not in session:
-        return redirect(url_for('index'))
+    if "user_id" not in session:
+        return redirect(url_for("index"))
 
     connection = get_db_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
@@ -208,13 +208,13 @@ def parameters():
     cursor.close()
     connection.close()
 
-    return render_template('parameters.html', parameters=parameters)
+    return render_template("parameters.html", parameters=parameters)
 
-@app.route('/add_parameter', methods=['GET', 'POST'])
+@app.route("/add_parameter", methods=["GET", "POST"])
 @nocache
 def add_parameter():
-    if 'user_id' not in session:
-        return redirect(url_for('index'))
+    if "user_id" not in session:
+        return redirect(url_for("index"))
 
     connection = get_db_connection()
     cursor = connection.cursor()
@@ -222,11 +222,11 @@ def add_parameter():
     cursor.execute("SELECT id, name FROM stations")
     stations = cursor.fetchall()
 
-    if request.method == 'POST':
-        name = request.form.get('name')
-        unit = request.form.get('unit')
-        typeJson = request.form.get('typeJson')
-        decimalPlaces = request.form.get('decimalPlaces')
+    if request.method == "POST":
+        name = request.form.get("name")
+        unit = request.form.get("unit")
+        typeJson = request.form.get("typeJson")
+        decimalPlaces = request.form.get("decimalPlaces")
 
         if not name or not unit or not typeJson or not decimalPlaces:
             return render_template("add_parameter.html", error="Preencha todos os campos obrigatórios.", stations=stations)
@@ -246,14 +246,14 @@ def add_parameter():
 
     return render_template("add_parameter.html", stations=stations)
 
-@app.route('/users', methods=['GET', 'POST'])
+@app.route("/users", methods=["GET", "POST"])
 @nocache
 def users():
-    user_name = session.get('user_name')
-    user_role = session.get('user_role')
+    user_name = session.get("user_name")
+    user_role = session.get("user_role")
 
     if not user_name or user_role != 1:
-        return redirect(url_for('index'))
+        return redirect(url_for("index"))
     
     connection = get_db_connection()
     cursor = connection.cursor()
@@ -262,11 +262,14 @@ def users():
     connection.close()
     return render_template("users.html", users=users)
 
-@app.route('/graphs')
+@app.route("/graphs", methods=["GET"])
 @nocache
 def graphs():
-    if 'user_id' not in session:
-        return redirect(url_for('index'))
+    if "user_id" not in session:
+        return redirect(url_for("index"))
+
+    start_date_str = request.args.get("start_date")
+    end_date_str = request.args.get("end_date")
 
     connection = get_db_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
@@ -276,34 +279,62 @@ def graphs():
     stations = cursor.fetchall()
 
     for station in stations:
-        # Pega todos os parâmetros desta estação
-        cursor.execute("""
+        query = """
             SELECT tp.name, tp.unit, m.value, m.measureTime
             FROM parameters p
             JOIN typeParameters tp ON p.cdTypeParameter = tp.id
             JOIN measures m ON m.cdParameter = p.id
             WHERE p.cdStation = %s
-            ORDER BY m.measureTime
-        """, (station['id'],))
+        """
+        query_params = [station["id"]]
+
+        if start_date_str:
+            query += " AND m.measureTime >= %s"
+            query_params.append(start_date_str + " 00:00:00")
+        if end_date_str:
+            query += " AND m.measureTime <= %s"
+            query_params.append(end_date_str + " 23:59:59")
+        
+        query += " ORDER BY m.measureTime"
+
+        cursor.execute(query, tuple(query_params))
         measures = cursor.fetchall()
 
         # Agrupa os dados por parâmetro
-        param_dict = {}
-        categories = sorted(list({m['measureTime'].strftime("%H:%M") for m in measures}))  # horários
-        for m in measures:
-            key = f"{m['name']} ({m['unit']})"
-            if key not in param_dict:
-                param_dict[key] = [None]*len(categories)
-            idx = categories.index(m['measureTime'].strftime("%H:%M"))
-            param_dict[key][idx] = m['value']
+        param_data = {}
+        categories_set = set()
 
-        station['categories'] = categories
-        station['series'] = [{"name": k, "data": v} for k,v in param_dict.items()]
+        for m in measures:
+            param_name_unit = f"{m["name"]} ({m["unit"]})"
+            if param_name_unit not in param_data:
+                param_data[param_name_unit] = []
+            param_data[param_name_unit].append({
+                "time": m["measureTime"].strftime("%Y-%m-%d %H:%M"),
+                "value": float(m["value"])
+            })
+            categories_set.add(m["measureTime"].strftime("%Y-%m-%d %H:%M"))
+
+        categories = sorted(list(categories_set))
+
+        series = []
+        for param_name_unit, data_points in param_data.items():
+            # Criar um array de valores alinhado com as categorias
+            aligned_data = [None] * len(categories)
+            for dp in data_points:
+                try:
+                    idx = categories.index(dp["time"])
+                    aligned_data[idx] = dp["value"]
+                except ValueError:
+                    pass # Should not happen if categories are built correctly
+            series.append({"name": param_name_unit, "data": aligned_data})
+
+        station["categories"] = categories
+        station["series"] = series
 
     connection.close()
-    return render_template('graphs.html', stations=stations)
+    return render_template("graphs.html", stations=stations, start_date=start_date_str, end_date=end_date_str)
 
-@app.route('/deleteUser/<int:idUser>')
+@app.route("/deleteUser/<int:idUser>")
 def deleteUser(idUser):
     connection = get_db_connection()
     cursor = connection.cursor()
@@ -314,7 +345,246 @@ def deleteUser(idUser):
     cursor.close()
     connection.close()
 
-    return redirect(url_for('users'))
+    return redirect(url_for("users"))
 
-if __name__ == '__main__':
+@app.route("/edit_parameter/<int:parameter_id>", methods=["GET", "POST"])
+@nocache
+def edit_parameter(parameter_id):
+    if "user_id" not in session:
+        return redirect(url_for("index"))
+
+    connection = get_db_connection()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+    if request.method == "POST":
+        name = request.form.get("name")
+        unit = request.form.get("unit")
+        typeJson = request.form.get("typeJson")
+        decimalPlaces = request.form.get("decimalPlaces")
+
+        if not name or not unit or not typeJson or not decimalPlaces:
+            cursor.execute("SELECT * FROM typeParameters WHERE id = %s", (parameter_id,))
+            parameter = cursor.fetchone()
+            connection.close()
+            return render_template("edit_parameter.html", parameter=parameter, error="Preencha todos os campos obrigatórios.")
+
+        try:
+            cursor.execute("""
+                UPDATE typeParameters 
+                SET name = %s, unit = %s, typeJson = %s, numberOfDecimalPlaces = %s
+                WHERE id = %s
+            """, (name, unit, typeJson, decimalPlaces, parameter_id))
+
+            connection.commit()
+            cursor.execute("SELECT * FROM typeParameters WHERE id = %s", (parameter_id,))
+            parameter = cursor.fetchone()
+            connection.close()
+            return render_template("edit_parameter.html", parameter=parameter, success="Parâmetro atualizado com sucesso!")
+        except pymysql.err.IntegrityError as e:
+            cursor.execute("SELECT * FROM typeParameters WHERE id = %s", (parameter_id,))
+            parameter = cursor.fetchone()
+            connection.close()
+            return render_template("edit_parameter.html", parameter=parameter, error=f"Erro de integridade: {e}")
+
+    # GET request
+    cursor.execute("SELECT * FROM typeParameters WHERE id = %s", (parameter_id,))
+    parameter = cursor.fetchone()
+    connection.close()
+    
+    if not parameter:
+        return redirect(url_for("parameters"))
+    
+    return render_template("edit_parameter.html", parameter=parameter)
+
+@app.route("/edit_station/<int:station_id>", methods=["GET", "POST"])
+@nocache
+def edit_station(station_id):
+    if "user_id" not in session:
+        return redirect(url_for("index"))
+
+    connection = get_db_connection()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+    if request.method == "POST":
+        name = request.form.get("name")
+        latitude = request.form.get("latitude")
+        longitude = request.form.get("longitude")
+        uuid = request.form.get("uuid")
+        uuid_clean = uuid.replace(":", "").upper()
+        selected_parameters = request.form.getlist("cdParameter")
+
+        if not name or not latitude or not longitude or not uuid:
+            # Buscar dados para recarregar a página
+            cursor.execute("SELECT * FROM stations WHERE id = %s", (station_id,))
+            station = cursor.fetchone()
+            cursor.execute("SELECT id, name, unit FROM typeParameters")
+            all_parameters = cursor.fetchall()
+            cursor.execute("""
+                SELECT tp.id FROM parameters p 
+                JOIN typeParameters tp ON p.cdTypeParameter = tp.id 
+                WHERE p.cdStation = %s
+            """, (station_id,))
+            current_params = [row["id"] for row in cursor.fetchall()]
+            connection.close()
+            return render_template("edit_station.html", station=station, parameters=all_parameters, 
+                                 current_parameters=current_params, error="Preencha todos os campos obrigatórios.")
+
+        try:
+            # Atualizar dados da estação
+            cursor.execute("""
+                UPDATE stations 
+                SET name = %s, latitude = %s, longitude = %s, uuid = %s
+                WHERE id = %s
+            """, (name, latitude, longitude, uuid_clean, station_id))
+
+            # Remover parâmetros antigos
+            cursor.execute("DELETE FROM parameters WHERE cdStation = %s", (station_id,))
+
+            # Adicionar novos parâmetros
+            if selected_parameters:
+                for param_id in selected_parameters:
+                    cursor.execute(
+                        "INSERT INTO parameters (cdStation, cdTypeParameter) VALUES (%s, %s)",
+                        (station_id, param_id)
+                    )
+
+            connection.commit()
+            
+            # Buscar dados atualizados
+            cursor.execute("SELECT * FROM stations WHERE id = %s", (station_id,))
+            station = cursor.fetchone()
+            cursor.execute("SELECT id, name, unit FROM typeParameters")
+            all_parameters = cursor.fetchall()
+            cursor.execute("""
+                SELECT tp.id FROM parameters p 
+                JOIN typeParameters tp ON p.cdTypeParameter = tp.id 
+                WHERE p.cdStation = %s
+            """, (station_id,))
+            current_params = [row["id"] for row in cursor.fetchall()]
+            connection.close()
+            return render_template("edit_station.html", station=station, parameters=all_parameters, 
+                                 current_params=current_params, success="Estação atualizada com sucesso!")
+        except pymysql.err.IntegrityError as e:
+            connection.rollback()
+            cursor.execute("SELECT * FROM stations WHERE id = %s", (station_id,))
+            station = cursor.fetchone()
+            cursor.execute("SELECT id, name, unit FROM typeParameters")
+            all_parameters = cursor.fetchall()
+            cursor.execute("""
+                SELECT tp.id FROM parameters p 
+                JOIN typeParameters tp ON p.cdTypeParameter = tp.id 
+                WHERE p.cdStation = %s
+            """, (station_id,))
+            current_params = [row["id"] for row in cursor.fetchall()]
+            connection.close()
+            return render_template("edit_station.html", station=station, parameters=all_parameters, 
+                                 current_params=current_params, error=f"Erro ao atualizar: {e}")
+
+    # GET request
+    cursor.execute("SELECT * FROM stations WHERE id = %s", (station_id,))
+    station = cursor.fetchone()
+    
+    if not station:
+        connection.close()
+        return redirect(url_for("stations"))
+    
+    # Buscar todos os parâmetros disponíveis
+    cursor.execute("SELECT id, name, unit FROM typeParameters")
+    all_parameters = cursor.fetchall()
+    
+    # Buscar parâmetros atualmente associados à estação
+    cursor.execute("""
+        SELECT tp.id FROM parameters p 
+        JOIN typeParameters tp ON p.cdTypeParameter = tp.id 
+        WHERE p.cdStation = %s
+    """, (station_id,))
+    current_params = [row["id"] for row in cursor.fetchall()]
+    
+    connection.close()
+    return render_template("edit_station.html", station=station, parameters=all_parameters, current_params=current_params)
+
+
+@app.route("/edit_user/<int:user_id>", methods=["GET", "POST"])
+@nocache
+def edit_user(user_id):
+    if "user_id" not in session or session.get("user_role") != 1:
+        return redirect(url_for("index"))
+
+    connection = get_db_connection()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+    if request.method == "POST":
+        name = request.form.get("name")
+        email = request.form.get("email")
+        cpf = request.form.get("cpf")
+        password = request.form.get("password")
+        role = request.form.get("role")
+
+        if not name or not email or not cpf or not role:
+            cursor.execute("SELECT id, name, email, cpf, role FROM users WHERE id = %s", (user_id,))
+            user = cursor.fetchone()
+            connection.close()
+            return render_template("edit_user.html", user=user, error="Preencha todos os campos obrigatórios (exceto senha, se não for alterar).")
+
+        try:
+            if password:
+                cursor.execute("UPDATE users SET name = %s, email = %s, cpf = %s, password = %s, role = %s WHERE id = %s",
+                               (name, email, cpf, password, role, user_id))
+            else:
+                cursor.execute("UPDATE users SET name = %s, email = %s, cpf = %s, role = %s WHERE id = %s",
+                               (name, email, cpf, role, user_id))
+            connection.commit()
+            cursor.execute("SELECT id, name, email, cpf, role FROM users WHERE id = %s", (user_id,))
+            user = cursor.fetchone()
+            connection.close()
+            return render_template("edit_user.html", user=user, success="Usuário atualizado com sucesso!")
+        except pymysql.err.IntegrityError as e:
+            cursor.execute("SELECT id, name, email, cpf, role FROM users WHERE id = %s", (user_id,))
+            user = cursor.fetchone()
+            connection.close()
+            return render_template("edit_user.html", user=user, error=f"Erro de integridade: {e}")
+    else:
+        cursor.execute("SELECT id, name, email, cpf, role FROM users WHERE id = %s", (user_id,))
+        user = cursor.fetchone()
+        connection.close()
+        if not user:
+            return redirect(url_for("users"))
+        return render_template("edit_user.html", user=user)
+
+@app.route("/editUser/<int:idUser>")
+def editUser(idUser):
+    # Redireciona para a nova rota padronizada
+    return redirect(url_for("edit_user", user_id=idUser))
+
+
+@app.route("/user_profile")
+@nocache
+def user_profile():
+    if "user_id" not in session:
+        return redirect(url_for("index"))
+
+    user_cpf = session.get("user_id")
+    connection = get_db_connection()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+    
+    cursor.execute("SELECT id, name, email, cpf, role, createdAt FROM users WHERE cpf = %s", (user_cpf,))
+    user = cursor.fetchone()
+    connection.close()
+    
+    if not user:
+        return redirect(url_for("index"))
+    
+    return render_template("user_profile.html", user=user)
+
+if __name__ == "__main__":
     app.run(debug=True)
+
+
+
+
+@app.route("/about")
+@nocache
+def about():
+    return render_template("about.html")
+
+

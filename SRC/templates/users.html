@@ -4,44 +4,74 @@
 
 {% block content %}
 <div class="centeredContent">
-    <div class="adminCard">
+    <div class="adminCard full-width-card">
         <h1 class="title">Usuários Cadastrados</h1>
 
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Nome</th>
-                        <th>Email</th>
-                        <th>CPF</th>
-                        <th>Criado em</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if users %}
-                        {% for user in users %}
-                            <tr class='hv'>
-                                <td>{{ user.id }}</td>
-                                <td>{{ user.name }}</td>
-                                <td>{{ user.email }}</td>
-                                <td>{{ user.cpf }}</td>
-                                <td>{{ user.createdAt }}</td>
-                                <td>
-                                    <p><a href="{{ url_for('editUser', idUser=user.id) }}">Editar</a></p>
-                                    <p><a href="{{ url_for('deleteUser', idUser=user.id) }}">Excluir</a></p>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    {% else %}
-                        <tr><td colspan='6'>Nenhum registro encontrado</td></tr>
-                    {% endif %}
-                </tbody>
-            </table>
-        </div>
+        {% if users %}
+            <div class="users-grid">
+                {% for user in users %}
+                    <div class="user-card">
+                        <div class="user-header">
+                            <div class="user-avatar">
+                                <ion-icon name="person-circle-outline"></ion-icon>
+                            </div>
+                            <div class="user-info">
+                                <h3 class="user-name">{{ user.name }}</h3>
+                                <p class="user-role">
+                                    {% if user.role == 1 %}
+                                        <ion-icon name="shield-checkmark-outline"></ion-icon>
+                                        Administrador
+                                    {% else %}
+                                        <ion-icon name="person-outline"></ion-icon>
+                                        Usuário Comum
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="user-details">
+                            <div class="detail-item">
+                                <span class="detail-label"><ion-icon name="mail-outline"></ion-icon> Email:</span>
+                                <span class="detail-value">{{ user.email }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label"><ion-icon name="card-outline"></ion-icon> CPF:</span>
+                                <span class="detail-value">{{ user.cpf }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label"><ion-icon name="calendar-outline"></ion-icon> Criado em:</span>
+                                <span class="detail-value">{{ user.createdAt.strftime('%d/%m/%Y') if user.createdAt else 'N/A' }}</span>
+                            </div>
+                        </div>
+                        <div class="user-actions">
+                            <a href="{{ url_for('edit_user', user_id=user.id) }}" class="btn-small btn-edit">
+                                <ion-icon name="create-outline"></ion-icon> Editar
+                            </a>
+                            <a href="{{ url_for('deleteUser', idUser=user.id) }}" class="btn-small btn-delete" onclick="return confirm('Tem certeza que deseja excluir este usuário?');">
+                                <ion-icon name="trash-outline"></ion-icon> Excluir
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <ion-icon name="people-outline" class="empty-icon"></ion-icon>
+                <p class="empty-message">Nenhum usuário cadastrado ainda.</p>
+                <p class="empty-submessage">Adicione seu primeiro usuário para começar.</p>
+            </div>
+        {% endif %}
 
-        <p><a href="{{ url_for('home') }}">Voltar para o Início</a></p>
+        <div class="action-buttons">
+            <a href="{{ url_for('admin') }}" class="btn-primary">
+                <ion-icon name="person-add-outline"></ion-icon>
+                <span>ADICIONAR NOVO USUÁRIO</span>
+            </a>
+            <a href="{{ url_for('home') }}" class="btn-secondary">
+                <ion-icon name="home-outline"></ion-icon>
+                <span>Voltar para o Início</span>
+            </a>
+        </div>
     </div>
 </div>
 {% endblock %}
+

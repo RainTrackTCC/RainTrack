@@ -8,22 +8,59 @@
         <h1 class="title">Estações Cadastradas</h1>
 
         {% if stations %}
-            <ul>
+            <div class="stations-grid">
                 {% for station in stations %}
-                    <li><strong>{{ station.name }}</strong> — {{ station.latitude }}, {{ station.longitude }} (UUID: {{ station.uuid }})</li>
+                    <div class="station-card" onclick="editStation('{{ station.id }}')">
+                        <div class="station-header">
+                            <h3 class="station-name">{{ station.name }}</h3>
+                            <div class="station-actions">
+                                <ion-icon name="create-outline" class="edit-icon"></ion-icon>
+                            </div>
+                        </div>
+                        <div class="station-details">
+                            <div class="station-location">
+                                <ion-icon name="location-outline" class="location-icon"></ion-icon>
+                                <div class="location-info">
+                                    <span class="coordinates">{{ station.latitude }}, {{ station.longitude }}</span>
+                                </div>
+                            </div>
+                            <div class="station-info">
+                                <span class="info-label">UUID:</span>
+                                <span class="info-value uuid">{{ station.uuid }}</span>
+                            </div>
+                        </div>
+                        <div class="station-hover-overlay">
+                            <span>Clique para editar</span>
+                        </div>
+                    </div>
                 {% endfor %}
-            </ul>
+            </div>
         {% else %}
-            <p>Nenhuma estação cadastrada ainda.</p>
+            <div class="empty-state">
+                <ion-icon name="radio-outline" class="empty-icon"></ion-icon>
+                <p class="empty-message">Nenhuma estação cadastrada ainda.</p>
+                <p class="empty-submessage">Adicione sua primeira estação para começar.</p>
+            </div>
         {% endif %}
 
-        <div class="submit" style="margin-top: 20px;">
-            <a href="{{ url_for('add_station') }}">
-                <input type="button" value="ADICIONAR NOVA ESTAÇÃO">
+        <div class="action-buttons">
+            <a href="{{ url_for('add_station') }}" class="btn-primary">
+                <ion-icon name="add-outline"></ion-icon>
+                <span>ADICIONAR NOVA ESTAÇÃO</span>
+            </a>
+            <a href="{{ url_for('home') }}" class="btn-secondary">
+                <ion-icon name="home-outline"></ion-icon>
+                <span>Voltar para o Início</span>
             </a>
         </div>
-
-        <p><a href="{{ url_for('home') }}">Voltar para o Início</a></p>
     </div>
 </div>
+
+<script>
+function editStation(stationId) {
+    // Função para redirecionar para a página de edição da estação
+    window.location.href = `/edit_station/${stationId}`;
+}
+</script>
 {% endblock %}
+

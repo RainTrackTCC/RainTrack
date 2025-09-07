@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Estação{% endblock %}
+
+{% block content %}
+<div class="centeredContent">
+    <div class="formCard">
+        <h1 class="title">Editar Estação</h1>
+        
+        {% if error %}
+            <div class="error-message">
+                <ion-icon name="alert-circle-outline"></ion-icon>
+                <span>{{ error }}</span>
+            </div>
+        {% endif %}
+        
+        {% if success %}
+            <div class="success-message">
+                <ion-icon name="checkmark-circle-outline"></ion-icon>
+                <span>{{ success }}</span>
+            </div>
+        {% endif %}
+
+        <form method="POST" class="form">
+            <div class="formInputs">
+                <div class="input">
+                    <label for="name">Nome da Estação:</label>
+                    <input type="text" id="name" name="name" value="{{ station.name }}" required>
+                </div>
+
+                <div class="input">
+                    <label for="latitude">Latitude:</label>
+                    <input type="number" id="latitude" name="latitude" value="{{ station.latitude }}" step="any" required>
+                </div>
+
+                <div class="input">
+                    <label for="longitude">Longitude:</label>
+                    <input type="number" id="longitude" name="longitude" value="{{ station.longitude }}" step="any" required>
+                </div>
+
+                <div class="input">
+                    <label for="uuid">UUID:</label>
+                    <input type="text" id="uuid" name="uuid" value="{{ station.uuid }}" required>
+                </div>
+
+                <div class="input">
+                    <label>Parâmetros Associados:</label>
+                    <div class="checkbox-group">
+                        {% for param in parameters %}
+                            <label>
+                                <input type="checkbox" name="cdParameter" value="{{ param.id }}" 
+                                       {% if param.id in current_parameters %}checked{% endif %}>
+                                {{ param.name }} ({{ param.unit }})
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="submit">
+                <input type="submit" value="ATUALIZAR ESTAÇÃO">
+                <div class="action-links">
+                    <a href="{{ url_for('stations') }}">
+                        <ion-icon name="arrow-back-outline"></ion-icon>
+                        Voltar para Estações
+                    </a>
+                    <a href="{{ url_for('home') }}">
+                        <ion-icon name="home-outline"></ion-icon>
+                        Ir para Início
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+

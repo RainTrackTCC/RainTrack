@@ -4,72 +4,114 @@
 
 {% block content %}
 <div class="centeredContent">
-    <h1 class="title">Gráficos das Estações</h1>
+    <div class="adminCard full-width-card">
+        <h1 class="title">Gráficos das Estações</h1>
 
-    {% if stations %}
-        {% for station in stations %}
-            <div class="graphCard">
-                <h2>{{ station.name }}</h2>
-                <p>UUID: {{ station.uuid }}</p>
-                <div id="chart-{{ station.id }}" style="width:100%; height:400px;"></div>
+        <div class="filter-section">
+            <form method="GET" action="{{ url_for('graphs') }}" class="filter-form">
+                <div class="input-group">
+                    <label for="start_date">Data de Início:</label>
+                    <input type="date" id="start_date" name="start_date" value="{{ start_date if start_date else '' }}">
+                </div>
+                <div class="input-group">
+                    <label for="end_date">Data de Fim:</label>
+                    <input type="date" id="end_date" name="end_date" value="{{ end_date if end_date else '' }}">
+                </div>
+                <button type="submit" class="btn-primary">
+                    <ion-icon name="filter-outline"></ion-icon> Filtrar
+                </button>
+                <a href="{{ url_for('graphs') }}" class="btn-secondary">
+                    <ion-icon name="refresh-outline"></ion-icon> Limpar Filtros
+                </a>
+            </form>
+        </div>
 
-                <script>
-                    (function() {
-                        const categories = JSON.parse('{{ station.categories | tojson | safe }}');
-                        const series = JSON.parse('{{ station.series | tojson | safe}}');
+        {% if stations %}
+            {% for station in stations %}
+                <div class="graphCard">
+                    <div class="graph-header">
+                        <h2>{{ station.name }}</h2>
+                        <p>UUID: {{ station.uuid }}</p>
+                    </div>
+                    <div id="chart-{{ station.id }}" class="chart-container"></div>
 
-                         series = series.map(s => {
-                            if (s.name.toLowerCase().includes('temperatura')) {
+                    <script>
+                        (function() {
+                            const categories = JSON.parse('{{ station.categories | tojson | safe }}');
+                            let series = JSON.parse('{{ station.series | tojson | safe}}');
+
+                            // Ensure series data is numeric and handle potential nulls
+                            series = series.map(s => {
                                 return {
                                     ...s,
-                                    type: 'column',
-                                    yAxis: 0,
-                                    tooltip: { valueSuffix: ' °C' }
+                                    data: s.data.map(val => (val === null ? null : parseFloat(val)))
                                 };
-                            } else if (s.name.toLowerCase().includes('umidade')) {
-                                return {
-                                    ...s,
-                                    type: 'spline',
-                                    yAxis: 1,
-                                    tooltip: { valueSuffix: ' %' }
-                                };
-                            }
-                            return s;
-                        });
+                            });
 
-                        Highcharts.chart('chart-{{ station.id }}', {
-                            chart: { zooming: { type: 'xy' } },
-                            title: { text: '{{ station.name }}' },
-                            xAxis: { categories: categories, crosshair: true},
-                            yAxis: [{ 
-                                title: { text: 'Temperatura (°C)' },
-                                labels: { format: '{value} °C' },
-                                lineColor: Highcharts.getOptions().colors[1],
-                                lineWidth: 2
-                            }, { 
-                                title: { text: 'Umidade (%)' },
-                                labels: { format: '{value} %' },
-                                lineColor: Highcharts.getOptions().colors[0],
-                                lineWidth: 2,
-                                opposite: true
-                            }],
-                            tooltip: { shared: true },
-                            legend: {
-                                align: 'left',
-                                verticalAlign: 'top'
-                            },
-                            credits: { enabled: false },
-                            series: series
-                        });
-                    })();
-                </script>
-
+                            Highcharts.chart('chart-{{ station.id }}', {
+                                chart: { 
+                                    zoomType: 'xy',
+                                    backgroundColor: 'transparent'
+                                },
+                                title: { 
+                                    text: 'Gráfico de Medições - {{ station.name }}',
+                                    align: 'left',
+                                    style: {
+                                        color: '#333',
+                                        fontSize: '1.2em'
+                                    }
+                                },
+                                xAxis: {
+                                    categories: categories,
+                                    crosshair: true,
+                                    title: { text: 'Tempo' },
+                                    labels: {
+                                        style: { color: '#666' },
+                                        autoRotation: [-45, -90],
+                                        maxStaggerLines: 2,
+                                        overflow: 'allow',
+                                        formatter: function() {
+                                            // Formata a data para mostrar apenas a hora se houver muitas categorias
+                                            if (categories.length > 20) {
+                                                return this.value.substring(this.value.indexOf(' ') + 1); // Mostra apenas HH:MM
+                                            } else {
+                                                return this.value; // Mostra YYYY-MM-DD HH:MM
+                                            }
+                                        }
+                                    }
+                                },
+                                yAxis: [{
+                                    title: { text: 'Valor da Medição' },
+                                    labels: { format: '{value}', style: { color: '#666' } },
+                                    gridLineColor: '#e0e0e0'
+                                }],
+                                tooltip: { shared: true },
+                                legend: {
+                                    align: 'center',
+                                    verticalAlign: 'bottom',
+                                    layout: 'horizontal',
+                                    itemStyle: { color: '#333' }
+                                },
+                                credits: { enabled: false },
+                                series: series
+                            });
+                        })();
+                    </script>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <ion-icon name="analytics-outline" class="empty-icon"></ion-icon>
+                <p class="empty-message">Nenhum gráfico disponível para o período selecionado.</p>
+                <p class="empty-submessage">Tente ajustar as datas ou adicionar medições.</p>
             </div>
-        {% endfor %}
-    {% else %}
-        <p>Nenhum gráfico disponível.</p>
-    {% endif %}
+        {% endif %}
+    </div>
 </div>
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 {% endblock %}
+
