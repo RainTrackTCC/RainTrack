@@ -18,14 +18,48 @@
                         const categories = JSON.parse('{{ station.categories | tojson | safe }}');
                         const series = JSON.parse('{{ station.series | tojson | safe}}');
 
+                         series = series.map(s => {
+                            if (s.name.toLowerCase().includes('temperatura')) {
+                                return {
+                                    ...s,
+                                    type: 'column',
+                                    yAxis: 0,
+                                    tooltip: { valueSuffix: ' °C' }
+                                };
+                            } else if (s.name.toLowerCase().includes('umidade')) {
+                                return {
+                                    ...s,
+                                    type: 'spline',
+                                    yAxis: 1,
+                                    tooltip: { valueSuffix: ' %' }
+                                };
+                            }
+                            return s;
+                        });
+
                         Highcharts.chart('chart-{{ station.id }}', {
-                            chart: { type: 'line' },
+                            chart: { zooming: { type: 'xy' } },
                             title: { text: '{{ station.name }}' },
-                            xAxis: { categories: categories },
-                            yAxis: { title: { text: 'Valores' } },
-                            series: series,
-                            tooltip: { shared: true, crosshairs: true },
-                            credits: { enabled: false }
+                            xAxis: { categories: categories, crosshair: true},
+                            yAxis: [{ 
+                                title: { text: 'Temperatura (°C)' },
+                                labels: { format: '{value} °C' },
+                                lineColor: Highcharts.getOptions().colors[1],
+                                lineWidth: 2
+                            }, { 
+                                title: { text: 'Umidade (%)' },
+                                labels: { format: '{value} %' },
+                                lineColor: Highcharts.getOptions().colors[0],
+                                lineWidth: 2,
+                                opposite: true
+                            }],
+                            tooltip: { shared: true },
+                            legend: {
+                                align: 'left',
+                                verticalAlign: 'top'
+                            },
+                            credits: { enabled: false },
+                            series: series
                         });
                     })();
                 </script>
