@@ -23,10 +23,19 @@ def nocache(view):
 
 @app.context_processor
 def inject_user():
-    return {
-        "user_name": session.get("user_name"),
-        "user_role": session.get("user_role")
-    }
+    # Verifica se o usuário está realmente logado na sessão
+    if 'user_id' in session and session.get('user_name') and session.get('user_role') is not None:
+        return {
+            "user_name": session.get("user_name"),
+            "user_role": session.get("user_role")
+        }
+    else:
+        # Se não estiver logado, limpa qualquer dado inconsistente da sessão
+        session.clear()
+        return {
+            "user_name": None,
+            "user_role": None
+        }
 
 def get_db_connection():
     connection = pymysql.connect(
@@ -80,10 +89,7 @@ def logout():
 def home():
     
     if "user_id" not in session:
-        session["user_name"] = "Convidado"
-        session["user_role"] = 0
-        session["user_id"] = 12345678910
-        return redirect(url_for("home"))
+        return redirect(url_for("index"))
 
     user_name = session.get("user_name")
     user_role = session.get("user_role")
@@ -92,11 +98,11 @@ def home():
 @app.route("/admin", methods=["GET", "POST"])
 @nocache
 def admin():
+    if "user_id" not in session or session.get("user_role") != 1 or not session.get("user_name"):
+        return redirect(url_for("index"))
+
     user_name = session.get("user_name")
     user_role = session.get("user_role")
-
-    if not user_name or user_role != 1:
-        return redirect(url_for("index"))
 
     if request.method == "POST":
         name = request.form.get("name")
@@ -252,7 +258,7 @@ def users():
     user_name = session.get("user_name")
     user_role = session.get("user_role")
 
-    if not user_name or user_role != 1:
+    if "user_id" not in session or session.get("user_role") != 1 or not session.get("user_name"):
         return redirect(url_for("index"))
     
     connection = get_db_connection()
@@ -507,7 +513,7 @@ def edit_station(station_id):
 @app.route("/edit_user/<int:user_id>", methods=["GET", "POST"])
 @nocache
 def edit_user(user_id):
-    if "user_id" not in session or session.get("user_role") != 1:
+    if "user_id" not in session or session.get("user_role") != 1 or not session.get("user_name"):
         return redirect(url_for("index"))
 
     connection = get_db_connection()
@@ -557,6 +563,12 @@ def editUser(idUser):
     return redirect(url_for("edit_user", user_id=idUser))
 
 
+@app.route("/about")
+@nocache
+def about():
+    # Página sobre não requer login
+    return render_template("about.html")
+
 @app.route("/user_profile")
 @nocache
 def user_profile():
@@ -579,12 +591,5 @@ def user_profile():
 if __name__ == "__main__":
     app.run(debug=True)
 
-
-
-
-@app.route("/about")
-@nocache
-def about():
-    return render_template("about.html")
 
 

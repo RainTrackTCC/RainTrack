@@ -41,7 +41,14 @@
                 </div>
             </div>
         </form>
-        <p><a href="{{ url_for('parameters') }}">Voltar para a lista</a></p>
+        <div class="submit">
+            <div class="action-links">
+                <a href="{{ url_for('parameters') }}">
+                    <ion-icon name="arrow-back-outline"></ion-icon>
+                    Voltar para Parâmetros
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

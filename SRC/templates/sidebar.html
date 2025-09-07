@@ -4,53 +4,63 @@
     <img src="{{ url_for('static', filename='img/logoCompleta1.png') }}" alt="RainTrack" />
   </a>
   <nav class="links">
-    <a href="{{ url_for('home') }}">
-      <i><ion-icon name="home-outline"></ion-icon></i>
-      <span>Início</span>
-    </a>
-
-    <a href="{{ url_for("about") }}">
+    <!-- Links públicos sempre visíveis -->
+    <a href="{{ url_for('about') }}">
       <i><ion-icon name="information-circle-outline"></ion-icon></i>
       <span>Sobre nós</span>
     </a>
 
-    {% if user_name %}
-    <a href="{{ url_for('graphs') }}">
-      <i><ion-icon name="bar-chart-outline"></ion-icon></i>
-      <span>Gráficos</span>
-    </a>
+    {% if user_name and 'user_id' in session %}
+      <!-- Links para usuários logados -->
+      <a href="{{ url_for('home') }}">
+        <i><ion-icon name="home-outline"></ion-icon></i>
+        <span>Início</span>
+      </a>
 
-    {% if user_role == 1 %}
-    <a href="{{ url_for('parameters') }}">
-      <i><ion-icon name="albums-outline"></ion-icon></i>
-      <span>Parâmetros</span>
-    </a>
+      <a href="{{ url_for('graphs') }}">
+        <i><ion-icon name="bar-chart-outline"></ion-icon></i>
+        <span>Gráficos</span>
+      </a>
 
-    <a href="{{ url_for('stations') }}">
-      <i><ion-icon name="location-outline"></ion-icon></i>
-      <span>Estações</span>
-    </a>
+      {% if user_role == 1 %}
+        <!-- Links exclusivos para administradores -->
+        <a href="{{ url_for('parameters') }}">
+          <i><ion-icon name="albums-outline"></ion-icon></i>
+          <span>Parâmetros</span>
+        </a>
 
-    <a href="{{ url_for('admin') }}">
-      <i><ion-icon name="person-outline"></ion-icon></i>
-      <span>Admin</span>
-    </a>
+        <a href="{{ url_for('stations') }}">
+          <i><ion-icon name="location-outline"></ion-icon></i>
+          <span>Estações</span>
+        </a>
 
-    <a href="{{ url_for('users') }}">
-      <i><ion-icon name="people-outline"></ion-icon></i>
-      <span>Usuários</span>
-    </a>
+        <a href="{{ url_for('admin') }}">
+          <i><ion-icon name="person-outline"></ion-icon></i>
+          <span>Admin</span>
+        </a>
+
+        <a href="{{ url_for('users') }}">
+          <i><ion-icon name="people-outline"></ion-icon></i>
+          <span>Usuários</span>
+        </a>
+      {% else %}
+        <!-- Link para perfil de usuários comuns -->
+        <a href="{{ url_for('user_profile') }}">
+          <i><ion-icon name="person-outline"></ion-icon></i>
+          <span>{{ user_name }}</span>
+        </a>
+      {% endif %}
+
+      <a href="{{ url_for('logout') }}">
+        <i><ion-icon name="log-out-outline"></ion-icon></i>
+        <span>Sair</span>
+      </a>
     {% else %}
-    <a href="{{ url_for('user_profile') }}">
-      <i><ion-icon name="person-outline"></ion-icon></i>
-      <span>{{ user_name }}</span>
-    </a>
-    {% endif %}
-    {% else %}
-    <a href="{{ url_for('index') }}">
-      <i><ion-icon name="log-in-outline"></ion-icon></i>
-      <span>Entrar</span>
-    </a>
+      <!-- Link para login quando não logado -->
+      <a href="{{ url_for('index') }}">
+        <i><ion-icon name="log-in-outline"></ion-icon></i>
+        <span>Entrar</span>
+      </a>
     {% endif %}
   </nav>
 </div>
