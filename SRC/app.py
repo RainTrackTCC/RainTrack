@@ -338,6 +338,7 @@ def graphs():
         station["series"] = series
 
     connection.close()
+    print(station["series"])
     return render_template("graphs.html", stations=stations, start_date=start_date_str, end_date=end_date_str)
 
 @app.route("/deleteUser/<int:idUser>")

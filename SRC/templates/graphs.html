@@ -36,67 +36,60 @@
                     <div id="chart-{{ station.id }}" class="chart-container"></div>
 
                     <script>
-                        (function() {
-                            const categories = JSON.parse('{{ station.categories | tojson | safe }}');
-                            let series = JSON.parse('{{ station.series | tojson | safe}}');
+                    (function() {
+                        const categories = JSON.parse('{{ station.categories | tojson | safe }}');
+                        let series = JSON.parse('{{ station.series | tojson | safe }}');
 
-                            // Ensure series data is numeric and handle potential nulls
-                            series = series.map(s => {
+                        series = series.map(s => {
+                            if (s.name.toLowerCase().includes('temperatura')) {
                                 return {
                                     ...s,
-                                    data: s.data.map(val => (val === null ? null : parseFloat(val)))
+                                    type: 'column',
+                                    yAxis: 0,
+                                    tooltip: { valueSuffix: ' °C' }
                                 };
-                            });
+                            } else if (s.name.toLowerCase().includes('umidade')) {
+                                return {
+                                    ...s,
+                                    type: 'spline',
+                                    yAxis: 1,
+                                    tooltip: { valueSuffix: ' %' }
+                                };
+                            }
+                            return s;
+                        });
 
-                            Highcharts.chart('chart-{{ station.id }}', {
-                                chart: { 
-                                    zoomType: 'xy',
-                                    backgroundColor: 'transparent'
-                                },
-                                title: { 
-                                    text: 'Gráfico de Medições - {{ station.name }}',
-                                    align: 'left',
-                                    style: {
-                                        color: '#333',
-                                        fontSize: '1.2em'
-                                    }
-                                },
-                                xAxis: {
-                                    categories: categories,
-                                    crosshair: true,
-                                    title: { text: 'Tempo' },
-                                    labels: {
-                                        style: { color: '#666' },
-                                        autoRotation: [-45, -90],
-                                        maxStaggerLines: 2,
-                                        overflow: 'allow',
-                                        formatter: function() {
-                                            // Formata a data para mostrar apenas a hora se houver muitas categorias
-                                            if (categories.length > 20) {
-                                                return this.value.substring(this.value.indexOf(' ') + 1); // Mostra apenas HH:MM
-                                            } else {
-                                                return this.value; // Mostra YYYY-MM-DD HH:MM
-                                            }
-                                        }
-                                    }
-                                },
-                                yAxis: [{
-                                    title: { text: 'Valor da Medição' },
-                                    labels: { format: '{value}', style: { color: '#666' } },
-                                    gridLineColor: '#e0e0e0'
-                                }],
-                                tooltip: { shared: true },
-                                legend: {
-                                    align: 'center',
-                                    verticalAlign: 'bottom',
-                                    layout: 'horizontal',
-                                    itemStyle: { color: '#333' }
-                                },
-                                credits: { enabled: false },
-                                series: series
-                            });
-                        })();
-                    </script>
+                        Highcharts.chart('chart-{{ station.id }}', {
+                            chart: {
+                                zooming: { type: 'xy' }
+                            },
+                            title: { text: '{{ station.name }}' },
+                            xAxis: [{
+                                categories: categories,
+                                crosshair: true
+                            }],
+                            yAxis: [{ 
+                                title: { text: 'Temperatura (°C)' },
+                                labels: { format: '{value} °C' },
+                                lineColor: Highcharts.getOptions().colors[1],
+                                lineWidth: 2
+                            }, { 
+                                title: { text: 'Umidade (%)' },
+                                labels: { format: '{value} %' },
+                                lineColor: Highcharts.getOptions().colors[0],
+                                lineWidth: 2,
+                                opposite: true
+                            }],
+                            tooltip: { shared: true },
+                            legend: {
+                                align: 'left',
+                                verticalAlign: 'top'
+                            },
+                            credits: { enabled: false },
+                            series: series
+                        });
+                    })();
+                </script>
                 </div>
             {% endfor %}
         {% else %}
@@ -114,4 +107,3 @@
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 {% endblock %}
-
