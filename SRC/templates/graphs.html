@@ -31,72 +31,80 @@
                 <div class="graphCard">
                     <div class="graph-header">
                         <h2>{{ station.name }}</h2>
-                        <p>UUID: {{ station.uuid }}</p>
                     </div>
                     <div id="chart-{{ station.id }}" class="chart-container"></div>
 
                     <script>
-                        (function() {
-                            const categories = JSON.parse('{{ station.categories | tojson | safe }}');
-                            let series = JSON.parse('{{ station.series | tojson | safe}}');
+                    (function() {
+                        const categories = JSON.parse('{{ station.categories | tojson | safe }}');
+                        let series = JSON.parse('{{ station.series | tojson | safe }}');
 
-                            // Ensure series data is numeric and handle potential nulls
-                            series = series.map(s => {
-                                return {
-                                    ...s,
-                                    data: s.data.map(val => (val === null ? null : parseFloat(val)))
-                                };
-                            });
+                        // Converte os dados para float e trata nulls
+                        series = series.map(s => ({
+                            ...s,
+                            data: s.data.map(val => (val === null ? null : parseFloat(val)))
+                        }));
 
-                            Highcharts.chart('chart-{{ station.id }}', {
-                                chart: { 
-                                    zoomType: 'xy',
-                                    backgroundColor: 'transparent'
-                                },
-                                title: { 
-                                    text: 'Gráfico de Medições - {{ station.name }}',
-                                    align: 'left',
-                                    style: {
-                                        color: '#333',
-                                        fontSize: '1.2em'
+                        // Cria eixos dinamicamente: primeiro parâmetro -> coluna (eixo esquerdo), demais -> linha (eixo direito)
+                        const yAxes = series.map((s, i) => ({
+                            title: { text: s.name },          // <--- aqui usamos o nome do parâmetro já com unidade
+                            labels: { format: '{value}', style: { color: '#666' } },
+                            opposite: i !== 0,                // primeiro eixo à esquerda, os outros à direita
+                            gridLineColor: '#e0e0e0'
+                        }));
+
+                        // Associa cada série ao seu eixo e tipo
+                        series = series.map((s, i) => ({
+                            ...s,
+                            type: i === 0 ? 'column' : 'line',
+                            yAxis: i
+                        }));
+
+                        Highcharts.chart('chart-{{ station.id }}', {
+                            chart: { 
+                                zoomType: 'xy',
+                                backgroundColor: 'transparent'
+                            },
+                            title: { 
+                                text: 'Gráfico de Medições - {{ station.name }}',
+                                align: 'left',
+                                style: { color: '#333', fontSize: '1.2em' }
+                            },
+                            xAxis: {
+                                categories: categories,
+                                crosshair: true,
+                                title: { text: 'Hora' },
+                                labels: {
+                                    style: { color: '#666' },
+                                    formatter: function() {
+                                        // Mostra apenas HH:MM no eixo
+                                        return this.value.split(' ')[1];
                                     }
-                                },
-                                xAxis: {
-                                    categories: categories,
-                                    crosshair: true,
-                                    title: { text: 'Tempo' },
-                                    labels: {
-                                        style: { color: '#666' },
-                                        autoRotation: [-45, -90],
-                                        maxStaggerLines: 2,
-                                        overflow: 'allow',
-                                        formatter: function() {
-                                            // Formata a data para mostrar apenas a hora se houver muitas categorias
-                                            if (categories.length > 20) {
-                                                return this.value.substring(this.value.indexOf(' ') + 1); // Mostra apenas HH:MM
-                                            } else {
-                                                return this.value; // Mostra YYYY-MM-DD HH:MM
-                                            }
-                                        }
-                                    }
-                                },
-                                yAxis: [{
-                                    title: { text: 'Valor da Medição' },
-                                    labels: { format: '{value}', style: { color: '#666' } },
-                                    gridLineColor: '#e0e0e0'
-                                }],
-                                tooltip: { shared: true },
-                                legend: {
-                                    align: 'center',
-                                    verticalAlign: 'bottom',
-                                    layout: 'horizontal',
-                                    itemStyle: { color: '#333' }
-                                },
-                                credits: { enabled: false },
-                                series: series
-                            });
-                        })();
+                                }
+                            },
+                            yAxis: yAxes,
+                            tooltip: {
+                                shared: true,
+                                formatter: function() {
+                                    let s = `<b>${this.x}</b><br/>`;
+                                    this.points.forEach(p => {
+                                        s += `<span style="color:${p.color}">\u25CF</span> ${p.series.name}: <b>${p.y}</b><br/>`;
+                                    });
+                                    return s;
+                                }
+                            },
+                            legend: {
+                                align: 'center',
+                                verticalAlign: 'bottom',
+                                layout: 'horizontal',
+                                itemStyle: { color: '#333' }
+                            },
+                            credits: { enabled: false },
+                            series: series
+                        });
+                    })();
                     </script>
+
                 </div>
             {% endfor %}
         {% else %}
