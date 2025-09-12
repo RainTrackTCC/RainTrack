@@ -34,11 +34,7 @@ CREATE TABLE parameters (
     cdStation INT,
     FOREIGN KEY (cdTypeParameter) REFERENCES typeParameters(id),
     FOREIGN KEY (cdStation) REFERENCES stations(id)
-);
-
-ALTER TABLE stations
-ADD CONSTRAINT fk_station_parameter
-FOREIGN KEY (cdParameter) REFERENCES parameters(id);    
+);  
 
 CREATE TABLE measures (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
