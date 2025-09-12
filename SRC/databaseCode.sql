@@ -17,8 +17,7 @@ CREATE TABLE stations (
     latitude VARCHAR(255) NOT NULL,
     longitude VARCHAR(255) NOT NULL,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    uuid VARCHAR(17) NOT NULL UNIQUE,
-    cdParameter INT
+    uuid VARCHAR(17) NOT NULL UNIQUE
 );
 
 CREATE TABLE typeParameters (

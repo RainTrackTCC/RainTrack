@@ -270,7 +270,7 @@ def users():
     
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT id, name, cpf, email, role, createdAt FROM users ORDER BY createdAt DESC")
+    cursor.execute("SELECT id, name, cpf, email, role, createdAt FROM users ORDER BY id")
     users = cursor.fetchall()
     connection.close()
     return render_template("users.html", users=users)
