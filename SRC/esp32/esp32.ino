@@ -5,9 +5,9 @@
 #define DHTPIN 4
 #define DHTTYPE DHT11
 
-char* ssid = "Igor_2G";
-char* pwd = "Isabelli2014@";
-char* mqtt_server = "test.mosquitto.org";
+char* ssid = "";
+char* pwd = "";
+char* mqtt_server = "";
 
 WiFiClient wclient;
 PubSubClient mqttClient(wclient);
