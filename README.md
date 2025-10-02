@@ -17,8 +17,7 @@ A ideia por trás do RainTrack é proporcionar uma maneira simples e eficiente d
 Com esse projeto, buscamos otimizar o monitoramento do clima, tornando as informações mais acessíveis e ajudando na tomada de decisões para mitigar os impactos de eventos climáticos extremos.
 
 # Equipe
-| Nome | LinkedIn & GitHub |
-:----- | :---------------: |
+|    Função     | Nome                                  |                                                                                                                                                      LinkedIn & GitHub                                                                                                                                                      |
 | Team Member   | Bruno Oliveira | [![Linkedin Badge](https://img.shields.io/badge/Linkedin-blue?style=flat-square&logo=Linkedin&logoColor=white)](https://www.linkedin.com/in/bruno-oliveira-063911265/) [![GitHub Badge](https://img.shields.io/badge/GitHub-111217?style=flat-square&logo=github&logoColor=white)](https://github.com/BrunoOliveira06) |
 | Team Member   | Gustavo Gomes  | [![Linkedin Badge](https://img.shields.io/badge/Linkedin-blue?style=flat-square&logo=Linkedin&logoColor=white)](https://www.linkedin.com/in/gustavo-gomes-6a9a22320/) [![GitHub Badge](https://img.shields.io/badge/GitHub-111217?style=flat-square&logo=github&logoColor=white)](https://github.com/GustavoCostaGomes) |
 | Team Member   | Igor Côrrea    | [![Linkedin Badge](https://img.shields.io/badge/Linkedin-blue?style=flat-square&logo=Linkedin&logoColor=white)](LINKEDINIGOR) [![GitHub Badge](https://img.shields.io/badge/GitHub-111217?style=flat-square&logo=github&logoColor=white)](GITHUBIGOR) |
