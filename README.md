@@ -23,3 +23,10 @@ Com esse projeto, buscamos otimizar o monitoramento do clima, tornando as inform
 | Team Member   | Gustavo Gomes  | [![Linkedin Badge](https://img.shields.io/badge/Linkedin-blue?style=flat-square&logo=Linkedin&logoColor=white)](https://www.linkedin.com/in/gustavo-gomes-6a9a22320/) [![GitHub Badge](https://img.shields.io/badge/GitHub-111217?style=flat-square&logo=github&logoColor=white)](https://github.com/GustavoCostaGomes) |
 | Team Member   | Igor Côrrea    | [![Linkedin Badge](https://img.shields.io/badge/Linkedin-blue?style=flat-square&logo=Linkedin&logoColor=white)](LINKEDINIGOR) [![GitHub Badge](https://img.shields.io/badge/GitHub-111217?style=flat-square&logo=github&logoColor=white)](GITHUBIGOR) |
 | Team Member   | Thais Píres    | [![Linkedin Badge](https://img.shields.io/badge/Linkedin-blue?style=flat-square&logo=Linkedin&logoColor=white)](LINKEDINTHAIS) [![GitHub Badge](https://img.shields.io/badge/GitHub-111217?style=flat-square&logo=github&logoColor=white)]((https://github.com/ThaisPiresDosSantos)) |
+
+# Objetivo do Projeto
+O objetivo geral desse trabalho é desenvolver um sistema de monitoramento meteorológico automatizado, visando:
+* Implementar um servidor Flask conectado a um banco de dados MySQL;
+* Criar uma comunicação entre a estação meteorológica e o ESP32, utilizando o protocolo MQTT; 
+* Desenvolver um dashboard interativo que apresente as informações meteorológicas; 
+* Garantir a integridade e confiabilidade dos dados coletados, minimizando perdas.
