@@ -1,5 +1,7 @@
 # RainTrack TCC
 
+Este Trabalho de Conclusão de Curso (TCC) propõe o desenvolvimento do sistema 'RainTrack', focado no monitoramento meteorológico em tempo real. O sistema visa coletar e processar dados ambientais, facilitando a análise das condições climáticas e auxiliando na segurança pública e no planejamento urbano.
+
 # Índice
 * [Objetivo do Projeto](#objetivo-do-projeto)
 * [Equipe](#Equipe)
