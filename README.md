@@ -48,3 +48,15 @@ O objetivo geral desse trabalho é desenvolver um sistema de monitoramento meteo
 * ESP32
 * MQTT
 * Eclipse Mosquitto
+
+
+
+# Product Backlog
+
+| Rank | Prioridade | User Story                                                                                                                                              | Estimativa | Sprint |
+|------|------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|------------|--------|
+| 1    | Alta       | Placeholder                                                    | 5          | 1      |
+| 2    | Alta       | Placeholder                                                                    | 8          | 1      |
+| 3    | Alta       | Placeholder                                               | 5          | 2      |
+| ...  | Média      | ...                                                                                                                                                     | ...        | ...    |
+| 17   | Baixa      | Placeholder     | 2          | 3      |
