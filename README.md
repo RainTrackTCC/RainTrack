@@ -32,3 +32,19 @@ O objetivo geral desse trabalho é desenvolver um sistema de monitoramento meteo
 * Criar uma comunicação entre a estação meteorológica e o ESP32, utilizando o protocolo MQTT; 
 * Desenvolver um dashboard interativo que apresente as informações meteorológicas; 
 * Garantir a integridade e confiabilidade dos dados coletados, minimizando perdas.
+
+## Tecnologias Utilizadas
+
+* Git e GitHub
+* Visual Studio Code
+* Trello
+* MySQL
+* XAMPP
+* Python
+* Flask
+* CSS
+* JavaScript
+* Highcharts
+* ESP32
+* MQTT
+* Eclipse Mosquitto
