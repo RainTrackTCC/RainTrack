@@ -55,7 +55,7 @@ O objetivo geral desse trabalho é desenvolver um sistema de monitoramento meteo
 
 | Rank | Prioridade | User Story                                                                                                                                              | Estimativa | Sprint |
 |------|------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|------------|--------|
-| 1    | Alta       | Placeholder                                                    | 5          | 1      |
+| 1    | Alta       | Como sistema, quero receber dados via MQTT e armazenar no banco MySQL, para integrar as estações físicas ao sistema.                                                     | 13          | 1      |
 | 2    | Alta       | Placeholder                                                                    | 8          | 1      |
 | 3    | Alta       | Placeholder                                               | 5          | 2      |
 | ...  | Média      | ...                                                                                                                                                     | ...        | ...    |
