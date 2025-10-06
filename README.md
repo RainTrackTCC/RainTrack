@@ -55,10 +55,13 @@ O objetivo geral desse trabalho é desenvolver um sistema de monitoramento meteo
 
 | Rank | Prioridade | User Story                                                                                                                                              | Estimativa | Sprint |
 |------|------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|------------|--------|
-| 1    | Alta       | Como sistema, quero receber dados via MQTT e armazenar no banco MySQL, para integrar as estações físicas ao sistema.                                                     | 13          | 1      |
+| 1    | Alta       | Como sistema, quero receber dados via MQTT e armazenar no banco MySQL, para integrar as estações físicas ao sistema                                                     | 13          | 1      |
 | 2    | Alta       | Como admin, quero cadastrar usuários com diferentes permissões, para controlar o acesso ao sistema                                                                     | 8          | 1      |
-| 3    | Alta       | Como admin, quero visualizar minhas informações no perfil, para acompanhar meus dados cadastrados.                                                | 5          | 1      |
-| 4    | Alta       | Como admin, quero visualizar os gráficos de dados meteorológicos, para acompanhar as medições.                                                 | 13          | 2      |
+| 3    | Alta       | Como admin, quero visualizar minhas informações no perfil, para acompanhar meus dados cadastrados                                                | 5          | 1      |
+| 4    | Alta       | Como admin, quero visualizar os gráficos de dados meteorológicos, para acompanhar as medições                                                 | 13          | 2      |
 | 5    | Alta       | Como admin, quero cadastrar e editar estações meteorológicas, para gerenciar as fontes de dados                                                | 8          | 2      |
 | 6    | Alta       | Como admin, quero cadastrar e editar parâmetros de medição (umidade, temperatura, pluviosidade etc.), para definir os dados que serão coletados                                                | 8          | 2      |
-| 17   | Baixa      | Placeholder     | 2          | 3      |
+| 7    | Média       | Como admin, quero me registrar e fazer login, para acessar o sistema de forma segura                                                | 5          | 3      |
+| 8    | Média       | Como admin, quero acessar a página inicial com informações resumidas, para ter visão geral do sistema                                                | 5          | 3      |
+| 9   | Baixa      | Como admin, quero acessar a página “Sobre”, para entender o objetivo do sistema.     | 2          | 3      |
+| 10   | Baixa      | Como admin, quero acessar o sistema em dispositivos móveis com interface responsiva para usabilidade melhor.      | 8          | 4      |
