@@ -48,8 +48,8 @@
                     <div class="checkbox-group">
                         {% for param in parameters %}
                             <label>
-                                <input type="checkbox" name="cdParameter" value="{{ param.id }}" 
-                                       {% if param.id in current_parameters %}checked{% endif %}>
+                                <input type="checkbox" name="cdParameter" value="{{ param.id }}"
+                                    {% if param.id|string in current_parameters %}checked{% endif %}>
                                 {{ param.name }} ({{ param.unit }})
                             </label>
                         {% endfor %}

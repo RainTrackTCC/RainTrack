@@ -31,7 +31,6 @@
                 <div class="graphCard">
                     <div class="graph-header">
                         <h2>{{ station.name }}</h2>
-                        <p>UUID: {{ station.uuid }}</p>
                     </div>
                     <div id="chart-{{ station.id }}" class="chart-container"></div>
 
@@ -40,56 +39,71 @@
                         const categories = JSON.parse('{{ station.categories | tojson | safe }}');
                         let series = JSON.parse('{{ station.series | tojson | safe }}');
 
-                        series = series.map(s => {
-                            if (s.name.toLowerCase().includes('temperatura')) {
-                                return {
-                                    ...s,
-                                    type: 'column',
-                                    yAxis: 0,
-                                    tooltip: { valueSuffix: ' °C' }
-                                };
-                            } else if (s.name.toLowerCase().includes('umidade')) {
-                                return {
-                                    ...s,
-                                    type: 'spline',
-                                    yAxis: 1,
-                                    tooltip: { valueSuffix: ' %' }
-                                };
-                            }
-                            return s;
-                        });
+                        // Converte os dados para float e trata nulls
+                        series = series.map(s => ({
+                            ...s,
+                            data: s.data.map(val => (val === null ? null : parseFloat(val)))
+                        }));
+
+                        // Cria eixos dinamicamente: primeiro parâmetro -> coluna (eixo esquerdo), demais -> linha (eixo direito)
+                        const yAxes = series.map((s, i) => ({
+                            title: { text: s.name },          // <--- aqui usamos o nome do parâmetro já com unidade
+                            labels: { format: '{value}', style: { color: '#666' } },
+                            opposite: i !== 0,                // primeiro eixo à esquerda, os outros à direita
+                            gridLineColor: '#e0e0e0'
+                        }));
+
+                        // Associa cada série ao seu eixo e tipo
+                        series = series.map((s, i) => ({
+                            ...s,
+                            type: i === 0 ? 'column' : 'line',
+                            yAxis: i
+                        }));
 
                         Highcharts.chart('chart-{{ station.id }}', {
-                            chart: {
-                                zooming: { type: 'xy' }
+                            chart: { 
+                                zoomType: 'xy',
+                                backgroundColor: 'transparent'
                             },
-                            title: { text: '{{ station.name }}' },
-                            xAxis: [{
-                                categories: categories,
-                                crosshair: true
-                            }],
-                            yAxis: [{ 
-                                title: { text: 'Temperatura (°C)' },
-                                labels: { format: '{value} °C' },
-                                lineColor: Highcharts.getOptions().colors[1],
-                                lineWidth: 2
-                            }, { 
-                                title: { text: 'Umidade (%)' },
-                                labels: { format: '{value} %' },
-                                lineColor: Highcharts.getOptions().colors[0],
-                                lineWidth: 2,
-                                opposite: true
-                            }],
-                            tooltip: { shared: true },
-                            legend: {
+                            title: { 
+                                text: 'Gráfico de Medições - {{ station.name }}',
                                 align: 'left',
-                                verticalAlign: 'top'
+                                style: { color: '#333', fontSize: '1.2em' }
+                            },
+                            xAxis: {
+                                categories: categories,
+                                crosshair: true,
+                                title: { text: 'Hora' },
+                                labels: {
+                                    style: { color: '#666' },
+                                    formatter: function() {
+                                        // Mostra apenas HH:MM no eixo
+                                        return this.value.split(' ')[1];
+                                    }
+                                }
+                            },
+                            yAxis: yAxes,
+                            tooltip: {
+                                shared: true,
+                                formatter: function() {
+                                    let s = `<b>${this.x}</b><br/>`;
+                                    this.points.forEach(p => {
+                                        s += `<span style="color:${p.color}">\u25CF</span> ${p.series.name}: <b>${p.y}</b><br/>`;
+                                    });
+                                    return s;
+                                }
+                            },
+                            legend: {
+                                align: 'center',
+                                verticalAlign: 'bottom',
+                                layout: 'horizontal',
+                                itemStyle: { color: '#333' }
                             },
                             credits: { enabled: false },
                             series: series
                         });
                     })();
-                </script>
+                    </script>
                 </div>
             {% endfor %}
         {% else %}

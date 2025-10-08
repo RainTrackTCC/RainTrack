@@ -79,6 +79,13 @@ def index():
     
     return render_template("index.html")
 
+@app.route("/guest")
+def guest():
+        session["user_name"] = "convidado"
+        session["user_role"] = 0
+        session["user_id"] = 12345678900
+        return redirect(url_for("home"))
+
 @app.route("/logout")
 def logout():
     session.clear()
@@ -263,7 +270,7 @@ def users():
     
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT id, name, cpf, email, role, createdAt FROM users ORDER BY createdAt DESC")
+    cursor.execute("SELECT id, name, cpf, email, role, createdAt FROM users ORDER BY id")
     users = cursor.fetchall()
     connection.close()
     return render_template("users.html", users=users)
@@ -417,7 +424,7 @@ def edit_station(station_id):
         latitude = request.form.get("latitude")
         longitude = request.form.get("longitude")
         uuid = request.form.get("uuid")
-        uuid_clean = uuid.replace(":", "").upper()
+        uuid_clean = uuid.replace(":", "").upper() if uuid else None
         selected_parameters = request.form.getlist("cdParameter")
 
         if not name or not latitude or not longitude or not uuid:
@@ -431,10 +438,16 @@ def edit_station(station_id):
                 JOIN typeParameters tp ON p.cdTypeParameter = tp.id 
                 WHERE p.cdStation = %s
             """, (station_id,))
-            current_params = [row["id"] for row in cursor.fetchall()]
+            # normalizar para strings
+            current_parameters = [str(row["id"]) for row in cursor.fetchall()]
             connection.close()
-            return render_template("edit_station.html", station=station, parameters=all_parameters, 
-                                 current_parameters=current_params, error="Preencha todos os campos obrigatórios.")
+            return render_template(
+                "edit_station.html",
+                station=station,
+                parameters=all_parameters,
+                current_parameters=current_parameters,
+                error="Preencha todos os campos obrigatórios."
+            )
 
         try:
             # Atualizar dados da estação
@@ -467,10 +480,15 @@ def edit_station(station_id):
                 JOIN typeParameters tp ON p.cdTypeParameter = tp.id 
                 WHERE p.cdStation = %s
             """, (station_id,))
-            current_params = [row["id"] for row in cursor.fetchall()]
+            current_parameters = [str(row["id"]) for row in cursor.fetchall()]
             connection.close()
-            return render_template("edit_station.html", station=station, parameters=all_parameters, 
-                                 current_params=current_params, success="Estação atualizada com sucesso!")
+            return render_template(
+                "edit_station.html",
+                station=station,
+                parameters=all_parameters,
+                current_parameters=current_parameters,
+                success="Estação atualizada com sucesso!"
+            )
         except pymysql.err.IntegrityError as e:
             connection.rollback()
             cursor.execute("SELECT * FROM stations WHERE id = %s", (station_id,))
@@ -482,10 +500,15 @@ def edit_station(station_id):
                 JOIN typeParameters tp ON p.cdTypeParameter = tp.id 
                 WHERE p.cdStation = %s
             """, (station_id,))
-            current_params = [row["id"] for row in cursor.fetchall()]
+            current_parameters = [str(row["id"]) for row in cursor.fetchall()]
             connection.close()
-            return render_template("edit_station.html", station=station, parameters=all_parameters, 
-                                 current_params=current_params, error=f"Erro ao atualizar: {e}")
+            return render_template(
+                "edit_station.html",
+                station=station,
+                parameters=all_parameters,
+                current_parameters=current_parameters,
+                error=f"Erro ao atualizar: {e}"
+            )
 
     # GET request
     cursor.execute("SELECT * FROM stations WHERE id = %s", (station_id,))
@@ -505,10 +528,15 @@ def edit_station(station_id):
         JOIN typeParameters tp ON p.cdTypeParameter = tp.id 
         WHERE p.cdStation = %s
     """, (station_id,))
-    current_params = [row["id"] for row in cursor.fetchall()]
+    current_parameters = [str(row["id"]) for row in cursor.fetchall()]
     
     connection.close()
-    return render_template("edit_station.html", station=station, parameters=all_parameters, current_params=current_params)
+    return render_template(
+        "edit_station.html",
+        station=station,
+        parameters=all_parameters,
+        current_parameters=current_parameters
+    )
 
 
 @app.route("/edit_user/<int:user_id>", methods=["GET", "POST"])

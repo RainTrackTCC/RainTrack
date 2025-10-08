@@ -17,8 +17,7 @@ CREATE TABLE stations (
     latitude VARCHAR(255) NOT NULL,
     longitude VARCHAR(255) NOT NULL,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    uuid VARCHAR(17) NOT NULL UNIQUE,
-    cdParameter INT
+    uuid VARCHAR(17) NOT NULL UNIQUE
 );
 
 CREATE TABLE typeParameters (
@@ -35,11 +34,7 @@ CREATE TABLE parameters (
     cdStation INT,
     FOREIGN KEY (cdTypeParameter) REFERENCES typeParameters(id),
     FOREIGN KEY (cdStation) REFERENCES stations(id)
-);
-
-ALTER TABLE stations
-ADD CONSTRAINT fk_station_parameter
-FOREIGN KEY (cdParameter) REFERENCES parameters(id);    
+);  
 
 CREATE TABLE measures (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
