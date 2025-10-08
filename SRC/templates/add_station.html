@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 
-{% block title %}Adicionar Estação{% endblock %}
+{% block title %}Adicionar Posto{% endblock %}
 
 {% block content %}
 <div class="centeredContent">
     <div class="adminCard">
-        <h1 class="title">Cadastrar Nova Estação</h1>
+        <h1 class="title">Cadastrar Novo Posto</h1>
 
         {% if error %}
             <p style="color: red;">{{ error }}</p>
@@ -17,7 +17,7 @@
         <form class="form" action="{{ url_for('add_station') }}" method="POST">
             <div class="formInputs">
                 <div class="input">
-                    <label for="name">Nome da Estação</label>
+                    <label for="name">Nome do Posto</label>
                     <input type="text" name="name" id="name" required />
                 </div>
 
@@ -58,7 +58,7 @@
             <div class="action-links">
                 <a href="{{ url_for('stations') }}">
                     <ion-icon name="arrow-back-outline"></ion-icon>
-                    Voltar para Estações
+                    Voltar para Postos
                 </a>
             </div>
         </div>

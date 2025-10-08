@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 
-{% block title %}Estações{% endblock %}
+{% block title %}Postos{% endblock %}
 
 {% block content %}
 <div class="centeredContent">
     <div class="adminCard">
-        <h1 class="title">Estações Cadastradas</h1>
+        <h1 class="title">Postos Cadastrados</h1>
 
         {% if stations %}
             <div class="stations-grid">
@@ -38,15 +38,15 @@
         {% else %}
             <div class="empty-state">
                 <ion-icon name="radio-outline" class="empty-icon"></ion-icon>
-                <p class="empty-message">Nenhuma estação cadastrada ainda.</p>
-                <p class="empty-submessage">Adicione sua primeira estação para começar.</p>
+                <p class="empty-message">Nenhum posto cadastrado ainda.</p>
+                <p class="empty-submessage">Adicione seu primeiro posto para começar.</p>
             </div>
         {% endif %}
 
         <div class="action-buttons">
             <a href="{{ url_for('add_station') }}" class="btn-primary">
                 <ion-icon name="add-outline"></ion-icon>
-                <span>ADICIONAR NOVA ESTAÇÃO</span>
+                <span>ADICIONAR NOVO POSTO</span>
             </a>
             <a href="{{ url_for('home') }}" class="btn-secondary">
                 <ion-icon name="home-outline"></ion-icon>
@@ -58,7 +58,7 @@
 
 <script>
 function editStation(stationId) {
-    // Função para redirecionar para a página de edição da estação
+    // Função para redirecionar para a página de edição do posto
     window.location.href = `/edit_station/${stationId}`;
 }
 </script>

@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 
-{% block title %}Editar Estação{% endblock %}
+{% block title %}Editar Posto{% endblock %}
 
 {% block content %}
 <div class="centeredContent">
     <div class="formCard">
-        <h1 class="title">Editar Estação</h1>
+        <h1 class="title">Editar Posto</h1>
         
         {% if error %}
             <div class="error-message">
@@ -24,7 +24,7 @@
         <form method="POST" class="form">
             <div class="formInputs">
                 <div class="input">
-                    <label for="name">Nome da Estação:</label>
+                    <label for="name">Nome do Posto:</label>
                     <input type="text" id="name" name="name" value="{{ station.name }}" required>
                 </div>
 
@@ -62,7 +62,7 @@
                 <div class="action-links">
                     <a href="{{ url_for('stations') }}">
                         <ion-icon name="arrow-back-outline"></ion-icon>
-                        Voltar para Estações
+                        Voltar para Postos
                     </a>
                     <a href="{{ url_for('home') }}">
                         <ion-icon name="home-outline"></ion-icon>
