@@ -403,6 +403,23 @@ def edit_parameter(parameter_id):
     
     return render_template("edit_parameter.html", parameter=parameter)
 
+@app.route("/deleteParameter/<int:idParameter>")
+def deleteParameter(idParameter):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("SET SQL_SAFE_UPDATES = 0;")
+    
+    cursor.execute("DELETE FROM parameters WHERE id = %s", (idParameter,))
+    connection.commit()
+
+    cursor.execute("SET SQL_SAFE_UPDATES = 1;")
+    
+    cursor.close()
+    connection.close()
+
+    return redirect(url_for("parameters"))
+
 @app.route("/edit_station/<int:station_id>", methods=["GET", "POST"])
 @nocache
 def edit_station(station_id):
@@ -510,6 +527,22 @@ def edit_station(station_id):
     connection.close()
     return render_template("edit_station.html", station=station, parameters=all_parameters, current_params=current_params)
 
+@app.route("/deleteStation/<int:idStation>")
+def deleteStation(idStation):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("SET SQL_SAFE_UPDATES = 0;")
+    
+    cursor.execute("DELETE FROM stations WHERE id = %s", (idStation,))
+    connection.commit()
+
+    cursor.execute("SET SQL_SAFE_UPDATES = 1;")
+    
+    cursor.close()
+    connection.close()
+
+    return redirect(url_for("stations"))
 
 @app.route("/edit_user/<int:user_id>", methods=["GET", "POST"])
 @nocache
