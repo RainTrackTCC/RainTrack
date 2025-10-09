@@ -44,6 +44,40 @@ CREATE TABLE measures (
     FOREIGN KEY (cdParameter) REFERENCES parameters(id)
 );
 
+DELIMITER $$
+CREATE TRIGGER Delete_parameters
+BEFORE DELETE ON typeParameters
+FOR EACH ROW
+BEGIN    
+
+    DELETE
+    FROM measures
+    WHERE cdParameter IN (SELECT id FROM parameters WHERE cdTypeParameter = OLD.id);
+    
+	DELETE
+    FROM parameters
+    WHERE cdTypeParameter = OLD.id;
+    
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER Delete_stations
+BEFORE DELETE ON stations
+FOR EACH ROW
+BEGIN    
+
+    DELETE
+    FROM measures
+    WHERE cdParameter IN (SELECT id FROM parameters WHERE cdStation = OLD.id);
+    
+	DELETE
+    FROM parameters
+    WHERE cdStation = OLD.id;
+    
+END$$
+DELIMITER ;
+
 INSERT INTO users (name, cpf, email, password, role) 
 VALUES
 ('Admin', '00000000000', 'raintrack@gmail.com', '123', 1);
