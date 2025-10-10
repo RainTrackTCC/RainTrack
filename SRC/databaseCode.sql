@@ -17,8 +17,7 @@ CREATE TABLE stations (
     latitude VARCHAR(255) NOT NULL,
     longitude VARCHAR(255) NOT NULL,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    uuid VARCHAR(17) NOT NULL UNIQUE,
-    cdParameter INT
+    uuid VARCHAR(17) NOT NULL UNIQUE
 );
 
 CREATE TABLE typeParameters (
@@ -33,20 +32,16 @@ CREATE TABLE parameters (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     cdTypeParameter INT NOT NULL,
     cdStation INT,
-    FOREIGN KEY (cdTypeParameter) REFERENCES typeParameters(id),
-    FOREIGN KEY (cdStation) REFERENCES stations(id)
+    FOREIGN KEY (cdTypeParameter) REFERENCES typeParameters(id) ON DELETE CASCADE,
+    FOREIGN KEY (cdStation) REFERENCES stations(id) ON DELETE CASCADE
 );
-
-ALTER TABLE stations
-ADD CONSTRAINT fk_station_parameter
-FOREIGN KEY (cdParameter) REFERENCES parameters(id);    
 
 CREATE TABLE measures (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     value FLOAT NOT NULL,
     cdParameter INT NOT NULL,
     measureTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (cdParameter) REFERENCES parameters(id)
+    FOREIGN KEY (cdParameter) REFERENCES parameters(id) ON DELETE CASCADE
 );
 
 DELIMITER $$
@@ -55,9 +50,10 @@ BEFORE DELETE ON typeParameters
 FOR EACH ROW
 BEGIN    
 
-    DELETE
+	DELETE measures 
     FROM measures
-    WHERE cdParameter IN (SELECT id FROM parameters WHERE cdTypeParameter = OLD.id);
+    INNER JOIN parameters ON measures.cdParameter = parameters.id
+    WHERE parameters.cdStation = OLD.id;
     
 	DELETE
     FROM parameters

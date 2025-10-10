@@ -50,6 +50,9 @@
 
             <div class="submit">
                 <input type="submit" value="ATUALIZAR PARÂMETRO">
+                <a href="{{ url_for('deleteParameter', idParameter=parameter.id) }}" class="btn-deletep" onclick="return confirm('Tem certeza que deseja excluir este parâmetro?');">
+                    EXCLUIR
+                </a>
                 <div class="action-links">
                     <a href="{{ url_for('parameters') }}">
                         <ion-icon name="arrow-back-outline"></ion-icon>
