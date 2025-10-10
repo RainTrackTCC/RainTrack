@@ -59,6 +59,9 @@
 
             <div class="submit">
                 <input type="submit" value="ATUALIZAR ESTAÇÃO">
+                <a href="{{ url_for('deleteStation', idStation=station.id) }}" class="btn-deletep" onclick="return confirm('Tem certeza que deseja excluir este posto?');">
+                    EXCLUIR
+                </a>
                 <div class="action-links">
                     <a href="{{ url_for('stations') }}">
                         <ion-icon name="arrow-back-outline"></ion-icon>

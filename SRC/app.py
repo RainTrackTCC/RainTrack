@@ -417,7 +417,7 @@ def deleteParameter(idParameter):
 
     cursor.execute("SET SQL_SAFE_UPDATES = 0;")
     
-    cursor.execute("DELETE FROM parameters WHERE id = %s", (idParameter,))
+    cursor.execute("DELETE FROM typeparameters WHERE id = %s", (idParameter,))
     connection.commit()
 
     cursor.execute("SET SQL_SAFE_UPDATES = 1;")

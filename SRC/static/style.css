@@ -306,6 +306,28 @@ body {
     background-color: #51BBD5;
 }
 
+.submit .btn-deletep {
+    background-color: #b92a1a; 
+    color: white;
+    padding: 0.75rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+    width: 100%;
+    max-width: 200px;
+    text-decoration: none;
+    gap: 0.4rem;
+}
+
+.submit .btn-deletep:hover {
+    background-color: #be4537;
+}
+
 .submit a {
     color: #0097B2;
     text-decoration: underline;
