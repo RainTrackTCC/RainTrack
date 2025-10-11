@@ -49,6 +49,19 @@
                     </div>
                 </div>
 
+                <div class="input">
+                    <label for="cdUser">Selecione o Usuário</label>
+                    <div class="checkbox-group">
+                        {% for user in users %}
+                            <label>
+                                <input type="checkbox" name="cdUser" value="{{ user.id }}">
+                                {{ user.name }} ({{ param.unit }})
+                            </label>
+                            <br>
+                        {% endfor %}
+                    </div>
+                </div>
+
                 <div class="submit">
                     <input type="submit" value="CADASTRAR ESTAÇÃO" />
                 </div>
