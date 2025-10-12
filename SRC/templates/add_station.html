@@ -51,15 +51,12 @@
 
                 <div class="input">
                     <label for="cdUser">Selecione o Usuário</label>
-                    <div class="checkbox-group">
+                    <select name="cdUser" id="cdUser">
+                        <option value="">Escolha um usuário</option>
                         {% for user in users %}
-                            <label>
-                                <input type="checkbox" name="cdUser" value="{{ user.id }}">
-                                {{ user.name }} ({{ param.unit }})
-                            </label>
-                            <br>
+                            <option value="{{ user.id }}">{{ user.name }}</option>
                         {% endfor %}
-                    </div>
+                    </select>
                 </div>
 
                 <div class="submit">

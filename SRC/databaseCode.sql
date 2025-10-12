@@ -18,8 +18,8 @@ CREATE TABLE stations (
     longitude VARCHAR(255) NOT NULL,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     uuid VARCHAR(17) NOT NULL UNIQUE,
-    cdUser INT,
-    FOREIGN KEY (cdUser) REFERENCES users(id),
+    cdUser INT NULL,
+    FOREIGN KEY (cdUser) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE typeParameters (

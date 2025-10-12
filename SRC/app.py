@@ -79,13 +79,6 @@ def index():
     
     return render_template("index.html")
 
-@app.route("/guest")
-def guest():
-        session["user_name"] = "convidado"
-        session["user_role"] = 0
-        session["user_id"] = 12345678900
-        return redirect(url_for("home"))
-
 @app.route("/logout")
 def logout():
     session.clear()
@@ -144,7 +137,7 @@ def stations():
         return redirect(url_for("index"))
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT id, name, latitude, longitude, uuid FROM stations ORDER BY createdAt DESC")
+    cursor.execute("SELECT id, name, latitude, longitude, uuid, cdUser FROM stations ORDER BY createdAt DESC")
     stations = cursor.fetchall()
     connection.close()
     return render_template("stations.html", stations=stations)
@@ -158,6 +151,10 @@ def add_station():
     connection = get_db_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
 
+    # Consultar todos os usuários disponíveis
+    cursor.execute("SELECT id, name, cpf, email FROM users")
+    users = cursor.fetchall()
+
     # Consultar todos os parâmetros disponíveis
     cursor.execute("SELECT id, name, unit FROM typeParameters")
     parameters = cursor.fetchall()
@@ -167,6 +164,7 @@ def add_station():
         latitude = request.form.get("latitude")
         longitude = request.form.get("longitude")
         uuid = request.form.get("uuid")
+        cdUser = request.form.get("cdUser")
         uuid_clean = uuid.replace(":", "").upper()
         selected_parameters = request.form.getlist("cdParameter")  # IDs dos parâmetros
 
@@ -178,10 +176,15 @@ def add_station():
 
         try:
             # Inserir a estação
-            cursor.execute(
-                "INSERT INTO stations (name, latitude, longitude, uuid) VALUES (%s, %s, %s, %s)",
-                (name, latitude, longitude, uuid_clean)
-            )
+            if cdUser:
+                cursor.execute("INSERT INTO stations (name, latitude, longitude, uuid, cdUser) VALUES (%s, %s, %s, %s, %s)",
+                (name, latitude, longitude, uuid_clean, cdUser)
+                )
+            else:
+                cursor.execute(
+                    "INSERT INTO stations (name, latitude, longitude, uuid) VALUES (%s, %s, %s, %s)",
+                    (name, latitude, longitude, uuid_clean)
+                )   
             station_id = cursor.lastrowid
 
             # Para cada parâmetro selecionado, atualizar o registro existente com cdStation NULL
@@ -200,10 +203,10 @@ def add_station():
         finally:
             connection.close()
 
-        return render_template("add_station.html", success=success, parameters=parameters)
+        return render_template("add_station.html", success=success, parameters=parameters, users=users)
 
 
-    return render_template("add_station.html", parameters=parameters)
+    return render_template("add_station.html", parameters=parameters, users=users)
 
 
 
@@ -270,7 +273,7 @@ def users():
     
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT id, name, cpf, email, role, createdAt FROM users ORDER BY id")
+    cursor.execute("SELECT id, name, cpf, email, role, createdAt FROM users ORDER BY createdAt DESC")
     users = cursor.fetchall()
     connection.close()
     return render_template("users.html", users=users)
@@ -441,7 +444,10 @@ def edit_station(station_id):
         latitude = request.form.get("latitude")
         longitude = request.form.get("longitude")
         uuid = request.form.get("uuid")
-        uuid_clean = uuid.replace(":", "").upper() if uuid else None
+        cdUser = request.form.get("cdUser")
+        if not cdUser:
+            cdUser = None
+        uuid_clean = uuid.replace(":", "").upper()
         selected_parameters = request.form.getlist("cdParameter")
 
         if not name or not latitude or not longitude or not uuid:
@@ -450,29 +456,24 @@ def edit_station(station_id):
             station = cursor.fetchone()
             cursor.execute("SELECT id, name, unit FROM typeParameters")
             all_parameters = cursor.fetchall()
+            cursor.execute("SELECT id, name, cpf, email FROM users")
+            users = cursor.fetchall()
             cursor.execute("""
                 SELECT tp.id FROM parameters p 
                 JOIN typeParameters tp ON p.cdTypeParameter = tp.id 
                 WHERE p.cdStation = %s
             """, (station_id,))
-            # normalizar para strings
-            current_parameters = [str(row["id"]) for row in cursor.fetchall()]
+            current_params = [row["id"] for row in cursor.fetchall()]
             connection.close()
-            return render_template(
-                "edit_station.html",
-                station=station,
-                parameters=all_parameters,
-                current_parameters=current_parameters,
-                error="Preencha todos os campos obrigatórios."
-            )
+            return render_template("edit_station.html", station=station, parameters=all_parameters, current_parameters=current_params, users=users, error="Preencha todos os campos obrigatórios.")
 
         try:
             # Atualizar dados da estação
             cursor.execute("""
                 UPDATE stations 
-                SET name = %s, latitude = %s, longitude = %s, uuid = %s
+                SET name = %s, latitude = %s, longitude = %s, uuid = %s, cdUser = %s
                 WHERE id = %s
-            """, (name, latitude, longitude, uuid_clean, station_id))
+            """, (name, latitude, longitude, uuid_clean, cdUser, station_id))
 
             # Remover parâmetros antigos
             cursor.execute("DELETE FROM parameters WHERE cdStation = %s", (station_id,))
@@ -492,40 +493,32 @@ def edit_station(station_id):
             station = cursor.fetchone()
             cursor.execute("SELECT id, name, unit FROM typeParameters")
             all_parameters = cursor.fetchall()
+            cursor.execute("SELECT id, name FROM users")
+            users = cursor.fetchall()
             cursor.execute("""
                 SELECT tp.id FROM parameters p 
                 JOIN typeParameters tp ON p.cdTypeParameter = tp.id 
                 WHERE p.cdStation = %s
             """, (station_id,))
-            current_parameters = [str(row["id"]) for row in cursor.fetchall()]
+            current_params = [row["id"] for row in cursor.fetchall()]
             connection.close()
-            return render_template(
-                "edit_station.html",
-                station=station,
-                parameters=all_parameters,
-                current_parameters=current_parameters,
-                success="Estação atualizada com sucesso!"
-            )
+            return render_template("edit_station.html", station=station, parameters=all_parameters, users=users, current_params=current_params, success="Estação atualizada com sucesso!")
         except pymysql.err.IntegrityError as e:
             connection.rollback()
             cursor.execute("SELECT * FROM stations WHERE id = %s", (station_id,))
             station = cursor.fetchone()
             cursor.execute("SELECT id, name, unit FROM typeParameters")
             all_parameters = cursor.fetchall()
+            cursor.execute("SELECT id, name FROM users")
+            users = cursor.fetchall()
             cursor.execute("""
                 SELECT tp.id FROM parameters p 
                 JOIN typeParameters tp ON p.cdTypeParameter = tp.id 
                 WHERE p.cdStation = %s
             """, (station_id,))
-            current_parameters = [str(row["id"]) for row in cursor.fetchall()]
+            current_params = [row["id"] for row in cursor.fetchall()]
             connection.close()
-            return render_template(
-                "edit_station.html",
-                station=station,
-                parameters=all_parameters,
-                current_parameters=current_parameters,
-                error=f"Erro ao atualizar: {e}"
-            )
+            return render_template("edit_station.html", station=station, parameters=all_parameters, users=users, current_params=current_params, error=f"Erro ao atualizar: {e}")
 
     # GET request
     cursor.execute("SELECT * FROM stations WHERE id = %s", (station_id,))
@@ -538,6 +531,10 @@ def edit_station(station_id):
     # Buscar todos os parâmetros disponíveis
     cursor.execute("SELECT id, name, unit FROM typeParameters")
     all_parameters = cursor.fetchall()
+
+    # Buscar todos os usuários disponíveis
+    cursor.execute("SELECT id, name FROM users")
+    users = cursor.fetchall()
     
     # Buscar parâmetros atualmente associados à estação
     cursor.execute("""
@@ -545,15 +542,10 @@ def edit_station(station_id):
         JOIN typeParameters tp ON p.cdTypeParameter = tp.id 
         WHERE p.cdStation = %s
     """, (station_id,))
-    current_parameters = [str(row["id"]) for row in cursor.fetchall()]
+    current_params = [row["id"] for row in cursor.fetchall()]
     
     connection.close()
-    return render_template(
-        "edit_station.html",
-        station=station,
-        parameters=all_parameters,
-        current_parameters=current_parameters
-    )
+    return render_template("edit_station.html", station=station, parameters=all_parameters, users=users, current_params=current_params)
 
 @app.route("/deleteStation/<int:idStation>")
 def deleteStation(idStation):

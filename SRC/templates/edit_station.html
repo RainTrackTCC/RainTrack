@@ -55,10 +55,22 @@
                         {% endfor %}
                     </div>
                 </div>
+
+                <div class="input">
+                    <label for="cdUser">Selecione o Usuário</label>
+                    <select name="cdUser" id="cdUser">
+                        <option value="">Nenhum usuário vinculado</option>
+                        {% for user in users %}
+                            <option value="{{ user.id }}" {% if user.id == station.cdUser %}selected{% endif %}>
+                            {{ user.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
 
             <div class="submit">
-                <input type="submit" value="ATUALIZAR ESTAÇÃO">
+                <input type="submit" value="ATUALIZAR POSTO">     
                 <a href="{{ url_for('deleteStation', idStation=station.id) }}" class="btn-deletep" onclick="return confirm('Tem certeza que deseja excluir este posto?');">
                     EXCLUIR
                 </a>
