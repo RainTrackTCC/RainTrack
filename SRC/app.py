@@ -60,7 +60,7 @@ def index():
         
         connection = get_db_connection()
         cursor = connection.cursor(pymysql.cursors.DictCursor)
-        cursor.execute("SELECT password, email, name, role, cpf FROM users WHERE email = %s OR cpf = %s", (entry, entry))
+        cursor.execute("SELECT id, password, email, name, role, cpf FROM users WHERE email = %s OR cpf = %s", (entry, entry))
         user = cursor.fetchone()
         cursor.close()
         connection.close()
@@ -72,7 +72,8 @@ def index():
         else:
             session["user_name"] = user["name"].split()[0]
             session["user_role"] = user["role"]
-            session["user_id"] = user["cpf"]
+            session["user_id"] = user["id"]
+            session["user_cpf"] = user["cpf"]   
             return redirect(url_for("home"))
 
         return render_template("index.html", error=error_message)
@@ -283,6 +284,8 @@ def users():
 def graphs():
     if "user_id" not in session:
         return redirect(url_for("index"))
+    
+    user_id = session["user_id"]
 
     start_date_str = request.args.get("start_date")
     end_date_str = request.args.get("end_date")
@@ -290,9 +293,25 @@ def graphs():
     connection = get_db_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
-    # Pega todas as estações
-    cursor.execute("SELECT id, name, uuid FROM stations ORDER BY createdAt DESC")
-    stations = cursor.fetchall()
+    cursor.execute("SELECT role FROM users WHERE id = %s", (user_id,))
+    user = cursor.fetchone()
+
+    if user and user["role"] == 1:
+        cursor.execute("""
+            SELECT id, name, uuid, cdUser
+            FROM stations
+            ORDER BY createdAt DESC
+        """)
+        stations = cursor.fetchall()
+    else:
+        cursor.execute("""
+            SELECT id, name, uuid, cdUser
+            FROM stations
+            WHERE cdUser = %s OR cdUser IS NULL
+            ORDER BY createdAt DESC
+        """, (user_id,))
+        stations = cursor.fetchall()
+
 
     for station in stations:
         query = """
@@ -629,11 +648,11 @@ def user_profile():
     if "user_id" not in session:
         return redirect(url_for("index"))
 
-    user_cpf = session.get("user_id")
+    user_id = session.get("user_id")
     connection = get_db_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
-    cursor.execute("SELECT id, name, email, cpf, role, createdAt FROM users WHERE cpf = %s", (user_cpf,))
+    cursor.execute("SELECT id, name, email, cpf, role, createdAt FROM users WHERE id = %s", (user_id,))
     user = cursor.fetchone()
     connection.close()
     
