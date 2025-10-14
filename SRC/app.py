@@ -6,9 +6,11 @@ from dotenv import load_dotenv
 import os
 import pymysql
 from datetime import datetime
+from flask_bcrypt import Bcrypt
 
 load_dotenv()
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
 app.secret_key = "chaveSegurança"
 
 def nocache(view):
@@ -67,7 +69,7 @@ def index():
 
         if not user:
             error_message = "Usuário não encontrado. Verifique seu email ou CPF."
-        elif user["password"] != password:
+        elif not bcrypt.check_password_hash(user["password"], password):
             error_message = "Senha incorreta. Tente novamente."
         else:
             session["user_name"] = user["name"].split()[0]
@@ -121,8 +123,9 @@ def admin():
             error = "Email ou CPF já existe."
             return render_template("admin.html", error=error)
 
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
         cursor.execute("INSERT INTO users (name, email, cpf, password, role) VALUES (%s, %s, %s, %s, %s)",
-                       (name, email, cpf, password, role))
+               (name, email, cpf, hashed_password, role))
         connection.commit()
         cursor.close()
         connection.close()
@@ -373,6 +376,8 @@ def graphs():
 
 @app.route("/deleteUser/<int:idUser>")
 def deleteUser(idUser):
+    if "user_id" not in session or session.get("user_role") != 1 or not session.get("user_name"):
+        return redirect(url_for("index"))
     connection = get_db_connection()
     cursor = connection.cursor()
     
@@ -435,6 +440,8 @@ def edit_parameter(parameter_id):
 
 @app.route("/deleteParameter/<int:idParameter>")
 def deleteParameter(idParameter):
+    if "user_id" not in session or session.get("user_role") != 1 or not session.get("user_name"):
+        return redirect(url_for("index"))
     connection = get_db_connection()
     cursor = connection.cursor()
 
@@ -569,6 +576,8 @@ def edit_station(station_id):
 
 @app.route("/deleteStation/<int:idStation>")
 def deleteStation(idStation):
+    if "user_id" not in session or session.get("user_role") != 1 or not session.get("user_name"):
+        return redirect(url_for("index"))
     connection = get_db_connection()
     cursor = connection.cursor()
 
@@ -608,11 +617,12 @@ def edit_user(user_id):
 
         try:
             if password:
+                hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
                 cursor.execute("UPDATE users SET name = %s, email = %s, cpf = %s, password = %s, role = %s WHERE id = %s",
-                               (name, email, cpf, password, role, user_id))
+                        (name, email, cpf, hashed_password, role, user_id))
             else:
                 cursor.execute("UPDATE users SET name = %s, email = %s, cpf = %s, role = %s WHERE id = %s",
-                               (name, email, cpf, role, user_id))
+                        (name, email, cpf, role, user_id))
             connection.commit()
             cursor.execute("SELECT id, name, email, cpf, role FROM users WHERE id = %s", (user_id,))
             user = cursor.fetchone()
