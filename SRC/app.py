@@ -134,8 +134,9 @@ def admin():
 @app.route("/stations")
 @nocache
 def stations():
-    if "user_id" not in session:
+    if "user_id" not in session or session.get("user_role") != 1 or not session.get("user_name"):
         return redirect(url_for("index"))
+    
     connection = get_db_connection()
     cursor = connection.cursor()
     cursor.execute("SELECT id, name, latitude, longitude, uuid, cdUser FROM stations ORDER BY createdAt DESC")
@@ -146,7 +147,7 @@ def stations():
 @app.route("/add_station", methods=["GET", "POST"])
 @nocache
 def add_station():
-    if "user_id" not in session:
+    if "user_id" not in session or session.get("user_role") != 1 or not session.get("user_name"):
         return redirect(url_for("index"))
 
     connection = get_db_connection()
@@ -215,7 +216,7 @@ def add_station():
 @app.route("/parameters")
 @nocache
 def parameters():
-    if "user_id" not in session:
+    if "user_id" not in session or session.get("user_role") != 1 or not session.get("user_name"):
         return redirect(url_for("index"))
 
     connection = get_db_connection()
@@ -230,7 +231,7 @@ def parameters():
 @app.route("/add_parameter", methods=["GET", "POST"])
 @nocache
 def add_parameter():
-    if "user_id" not in session:
+    if "user_id" not in session or session.get("user_role") != 1 or not session.get("user_name"):
         return redirect(url_for("index"))
 
     connection = get_db_connection()
@@ -386,7 +387,7 @@ def deleteUser(idUser):
 @app.route("/edit_parameter/<int:parameter_id>", methods=["GET", "POST"])
 @nocache
 def edit_parameter(parameter_id):
-    if "user_id" not in session:
+    if "user_id" not in session or session.get("user_role") != 1 or not session.get("user_name"):
         return redirect(url_for("index"))
 
     connection = get_db_connection()
@@ -452,7 +453,7 @@ def deleteParameter(idParameter):
 @app.route("/edit_station/<int:station_id>", methods=["GET", "POST"])
 @nocache
 def edit_station(station_id):
-    if "user_id" not in session:
+    if "user_id" not in session or session.get("user_role") != 1 or not session.get("user_name"):
         return redirect(url_for("index"))
 
     connection = get_db_connection()
