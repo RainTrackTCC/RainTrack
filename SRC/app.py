@@ -87,6 +87,13 @@ def logout():
     session.clear()
     return redirect(url_for("index"))
 
+@app.route("/guest")
+def guest():
+    session["user_name"] = "Convidado"
+    session["user_role"] = 0
+    session["user_id"] = None
+    return redirect(url_for("home"))
+
 @app.route("/home")
 @nocache
 def home():
