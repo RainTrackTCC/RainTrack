@@ -48,20 +48,17 @@ CREATE TABLE measures (
 );
 
 DELIMITER $$
-CREATE TRIGGER Delete_parameters
+CREATE TRIGGER before_delete_typeparameters
 BEFORE DELETE ON typeParameters
 FOR EACH ROW
-BEGIN    
-
-	DELETE measures 
+BEGIN
+    DELETE measures 
     FROM measures
     INNER JOIN parameters ON measures.cdParameter = parameters.id
-    WHERE parameters.cdStation = OLD.id;
-    
-	DELETE
-    FROM parameters
+    WHERE parameters.cdTypeParameter = OLD.id;
+
+    DELETE FROM parameters
     WHERE cdTypeParameter = OLD.id;
-    
 END$$
 DELIMITER ;
 
@@ -84,6 +81,4 @@ DELIMITER ;
 
 INSERT INTO users (name, cpf, email, password, role) 
 VALUES
-('Admin', '00000000000', 'raintrack@gmail.com', '123', 1);
-
-SELECT * FROM users;
+('Admin', '00000000000', 'raintrack@gmail.com', '$2b$12$jxaB3glGF8oJVYZDNPLj0OekBOq3DpRCIeQCms38e1I.1NeCjWv7S', 1);
