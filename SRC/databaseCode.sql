@@ -48,7 +48,7 @@ CREATE TABLE measures (
 );
 
 DELIMITER $$
-CREATE TRIGGER before_delete_typeparameters
+CREATE TRIGGER delete_typeparameters
 BEFORE DELETE ON typeParameters
 FOR EACH ROW
 BEGIN
